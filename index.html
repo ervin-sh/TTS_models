@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open-Source TTS Benchmark 2026</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue: #1a56db;
+    --blue-light: #e8f0fd;
+    --green: #166534;
+    --green-bg: #dcfce7;
+    --red-bg: #fee2e2;
+    --red: #991b1b;
+    --yellow-bg: #fef9c3;
+    --yellow: #854d0e;
+    --gray: #6b7280;
+    --gray-bg: #f3f4f6;
+    --border: #e5e7eb;
+    --text: #111827;
+    --muted: #6b7280;
+    --warm: #fffbeb;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    color: var(--text);
+    background: #fff;
+    font-size: 15.5px;
+    line-height: 1.75;
+  }
+
+  /* ── Layout ── */
+  .paper {
+    max-width: 1020px;
+    margin: 0 auto;
+    padding: 0 40px 100px;
+  }
+
+  /* ── Header ── */
+  .paper-header {
+    border-bottom: 2px solid #111;
+    padding: 64px 0 40px;
+    margin-bottom: 52px;
+    text-align: center;
+  }
+  .paper-header .venue {
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--blue);
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+  .paper-header h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    margin-bottom: 16px;
+    color: #111;
+  }
+  .paper-header .authors {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 14px;
+  }
+  .paper-header .authors span {
+    display: inline-block;
+    margin: 0 10px;
+  }
+
+  /* ── Nav ── */
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    justify-content: center;
+    margin: 28px 0 0;
+    font-size: 13px;
+  }
+  .toc a {
+    color: var(--blue);
+    text-decoration: none;
+    padding: 3px 0;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+  .toc a:hover { border-color: var(--blue); }
+
+  /* ── Abstract ── */
+  .abstract {
+    border-left: 4px solid var(--blue);
+    background: var(--blue-light);
+    padding: 28px 32px;
+    margin-bottom: 60px;
+    border-radius: 0 8px 8px 0;
+  }
+  .abstract h3 {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--blue);
+    margin-bottom: 12px;
+  }
+  .abstract p {
+    font-style: italic;
+    font-size: 14.5px;
+    color: #1e3a5f;
+    line-height: 1.8;
+  }
+  .abstract p + p { margin-top: 12px; }
+
+  /* ── Section headings ── */
+  .section {
+    margin-bottom: 72px;
+  }
+  .section-heading {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 22px;
+    font-weight: 700;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+    margin-bottom: 30px;
+    color: #111;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .section-heading .num {
+    font-size: 13.5px;
+    color: var(--blue);
+    font-family: system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .subsection-heading {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin: 44px 0 18px;
+    font-family: system-ui, sans-serif;
+  }
+
+  /* ── Audio Cards ── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 22px 18px;
+    background: #fff;
+    transition: box-shadow 0.15s, border-color 0.15s;
+    position: relative;
+  }
+  .card:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.09); border-color: #d1d5db; }
+  .card.no-audio { background: #fafafa; opacity: 0.65; }
+  .card.playing { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,86,219,0.1); }
+  .card.bonus { border-style: dashed; }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    gap: 8px;
+  }
+  .card-name {
+    font-weight: 700;
+    font-size: 14.5px;
+    color: #111;
+    line-height: 1.35;
+  }
+  .card-name a { color: inherit; text-decoration: none; }
+  .card-name a:hover { color: var(--blue); }
+
+  .card-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 12px;
+  }
+  .card-note {
+    font-style: italic;
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 14px;
+    min-height: 20px;
+    line-height: 1.5;
+  }
+  .card-note.good { color: #166534; }
+  .card-note.mid { color: #854d0e; }
+  .card-note.bad { color: #991b1b; }
+  .card-note.na { color: var(--muted); }
+
+  /* ── Custom Audio Player ── */
+  .player {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 6px;
+  }
+  .play-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--blue);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .play-btn:hover { background: #1648c0; transform: scale(1.07); }
+  .play-btn svg { width: 13px; height: 13px; fill: #fff; }
+  .player-controls { flex: 1; }
+  .progress-bar {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 5px;
+    border-radius: 3px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+    display: block;
+    margin-bottom: 5px;
+  }
+  .progress-bar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--blue);
+    cursor: pointer;
+  }
+  .progress-bar::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--blue);
+    cursor: pointer;
+    border: none;
+  }
+  .time-display {
+    font-size: 11px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    font-family: ui-monospace, monospace;
+  }
+  .no-audio-label {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-style: italic;
+    padding: 8px 0 2px;
+  }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+    line-height: 1.7;
+  }
+  .badge-yes    { background: var(--green-bg); color: var(--green); }
+  .badge-no     { background: var(--gray-bg); color: var(--gray); }
+  .badge-cloud  { background: var(--yellow-bg); color: var(--yellow); }
+  .badge-warn   { background: #fce7f3; color: #9d174d; }
+  .badge-blue   { background: var(--blue-light); color: var(--blue); }
+  .badge-dashed { background: transparent; color: var(--gray); border: 1px dashed #ccc; }
+  .badge-bonus  { background: #f0fdf4; color: #15803d; border: 1px solid #86efac; }
+
+  /* ── Tables ── */
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    min-width: 700px;
+  }
+  thead th {
+    background: #111;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 13px 16px;
+    text-align: left;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  tbody tr:nth-child(even) { background: #fafafa; }
+  tbody tr:hover { background: var(--blue-light); }
+  tbody td {
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td.model-cell {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  td.model-cell a {
+    color: #111;
+    text-decoration: none;
+  }
+  td.model-cell a:hover { color: var(--blue); }
+  td.notes-cell {
+    background: var(--warm);
+    font-style: italic;
+    color: #444;
+    font-size: 13px;
+  }
+  .metric { font-family: ui-monospace, monospace; font-size: 12.5px; }
+  .black-square { color: #111; font-size: 15px; }
+  .mini-play {
+    background: none;
+    border: 1px solid var(--blue);
+    color: var(--blue);
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-size: 11px;
+    cursor: pointer;
+    margin-left: 6px;
+    vertical-align: middle;
+    transition: background 0.1s;
+  }
+  .mini-play:hover { background: var(--blue); color: #fff; }
+
+  /* ── Summary cards ── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 12px;
+  }
+  .summary-item {
+    display: flex;
+    gap: 12px;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13.5px;
+    background: #fafafa;
+    line-height: 1.6;
+  }
+  .summary-item .crit {
+    font-weight: 600;
+    color: #111;
+    white-space: nowrap;
+    min-width: 148px;
+  }
+  .summary-item .best { color: var(--muted); }
+  .summary-item.highlight { background: var(--blue-light); border-color: #bfdbfe; }
+  .summary-item.highlight .crit { color: var(--blue); }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--muted);
+    padding: 36px 0 16px;
+    border-top: 1px solid var(--border);
+    margin-top: 72px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 700px) {
+    .paper { padding: 0 20px 80px; }
+    .paper-header h1 { font-size: 22px; }
+    .cards-grid { grid-template-columns: 1fr; }
+    .summary-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="paper">
+
+  <!-- ─── HEADER ─── -->
+  <header class="paper-header">
+    <div class="venue">Personal Research · Experiments Lab · March 2026</div>
+    <h1>Open-Source TTS Benchmark:<br>13 Models vs AWS Nova Sonic v2</h1>
+    <div class="authors">
+      <span>Local Mac Testing</span>
+      <span>·</span>
+      <span>HuggingFace Model Pages</span>
+      <span>·</span>
+      <span>Hands-on Listening</span>
+    </div>
+    <nav class="toc">
+      <a href="#samples">§1 Audio Samples</a>
+      <a href="#capabilities">§2 Capabilities</a>
+      <a href="#details">§3 Details & Notes</a>
+      <a href="#training">§4 Training & Metrics</a>
+      <a href="#summary">§5 Quick Summary</a>
+    </nav>
+  </header>
+
+  <!-- ─── ABSTRACT ─── -->
+  <div class="abstract">
+    <h3>Abstract</h3>
+    <p>Thirteen open-source text-to-speech models were evaluated against AWS Nova Sonic v2 as a reference for production-grade real-time voice AI. Testing was conducted locally on a Mac where possible, with the same input text passed to each model. Quality was assessed across naturalness, latency, local viability, voice cloning, emotion control, and licensing.</p>
+    <p>The most striking finding: <strong>Kokoro-82M (82M params, &lt;few hundred hours of training data)</strong> was rated "very natural — surprising" — outperforming fishspeech which trained on 2M+ hours and 0.5B parameters. Architecture and data curation consistently dominated raw scale. <strong>VibeVoice-Realtime-0.5B</strong> running locally at ~300ms was rated "almost the same feel as Nova Sonic 2." The cloud gap is closing.</p>
+  </div>
+
+  <!-- ─── § 1: AUDIO SAMPLES ─── -->
+  <section class="section" id="samples">
+    <h2 class="section-heading"><span class="num">§ 1</span> Audio Samples</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:18px;">All models were prompted with the same input: <em>"Hi how are you? How can I help you today?"</em> — recorded from local inference. Click ▶ to play. Only one model plays at a time.</p>
+
+    <div class="cards-grid" id="main-cards">
+
+      <!-- Nova Sonic v2 -->
+      <div class="card" data-model="novasonic">
+        <div class="card-top">
+          <div class="card-name"><a href="https://aws.amazon.com/ai/generative-ai/nova/sonic/" target="_blank">AWS Nova Sonic v2</a></div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-cloud">Cloud</span>
+          <span class="badge badge-yes">Full-Duplex</span>
+          <span class="badge badge-blue">Reference</span>
+        </div>
+        <div class="card-note good">Very natural</div>
+        <div class="player">
+          <button class="play-btn" onclick="togglePlay('novasonic')">
+            <svg id="icon-novasonic" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+          </button>
+          <div class="player-controls">
+            <input type="range" class="progress-bar" id="prog-novasonic" value="0" min="0" max="100" step="0.1" oninput="seek('novasonic',this.value)">
+            <div class="time-display" id="time-novasonic">0:00 / 0:00</div>
+          </div>
+        </div>
+        <audio id="audio-novasonic" src="recordings/NovaSonic2.wav" preload="metadata"></audio>
+      </div>
+
+      <!-- VibeVoice -->
+      <div class="card" data-model="vibevoice">
+        <div class="card-top">
+          <div class="card-name"><a href="https://huggingface.co/microsoft/VibeVoice-Realtime-0.5B" target="_blank">VibeVoice-Realtime-0.5B</a></div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-blue">0.5B</span>
+          <span class="badge badge-yes">~300ms</span>
+          <span class="badge badge-yes">Watermarked</span>
+        </div>
+        <div class="card-note good">Surprisingly natural — almost the same feel as Nova Sonic 2</div>
+        <div class="player">
+          <button class="play-btn" onclick="togglePlay('vibevoice')">
+            <svg id="icon-vibevoice" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+          </button>
+          <div class="player-controls">
+            <input type="range" class="progress-bar" id="prog-vibevoice" value="0" min="0" max="100" step="0.1" oninput="seek('vibevoice',this.value)">
+            <div class="time-display" id="time-vibevoice">0:00 / 0:00</div>
+          </div>
+        </div>
+        <audio id="audio-vibevoice" src="recordings/VibeVoice.wav" preload="metadata"></audio>
+      </div>
+
+      <!-- Chatterbox -->
+      <div class="card" data-model="chatterbox">
+        <div class="card-top">
+          <div class="card-name"><a href="https://huggingface.co/ResembleAI/chatterbox" target="_blank">Chatterbox</a></div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-blue">0.5B</span>
+          <span class="badge badge-yes">&lt;200ms</span>
+          <span class="badge badge-yes">Voice Clone</span>
+          <span class="badge badge-yes">Emotions</span>
+        </div>
+        <div class="card-note good">Very natural when you tune the correct exaggeration and weights</div>
+        <div class="player">
+          <button class="play-btn" onclick="togglePlay('chatterbox')">
+            <svg id="icon-chatterbox" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+          </button>
+          <div class="player-controls">
+            <input type="range" class="progress-bar" id="prog-chatterbox" value="0" min="0" max="100" step="0.1" oninput="seek('chatterbox',this.value)">
+            <div class="time-display" id="time-chatterbox">0:00 / 0:00</div>
+          </div>
+        </div>
+        <audio id="audio-chatterbox" src="recordings/chatterbox.wav" preload="metadata"></audio>
+      </div>
+
+      <!-- CSM-1B -->
+      <div class="card" data-model="csm">
+        <div class="card-top">
+          <div class="card-name"><a href="https://huggingface.co/sesame/csm-1b" target="_blank">CSM-1B</a></div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-blue">1B</span>
+          <span class="badge badge-yes">Multi-turn</span>
+        </div>
+        <div class="card-note good">Sounds great</div>
+        <div class="player">
+          <button class="play-btn" onclick="togglePlay('csm')">
+            <svg id="icon-csm" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+          </button>
+          <div class="player-controls">
+            <input type="range" class="progress-bar" id="prog-csm" value="0" min="0" max="100" step="0.1" oninput="seek('csm',this.value)">
+            <div class="time-display" id="time-csm">0:00 / 0:00</div>
+          </div>
+        </div>
+        <audio id="audio-csm" src="recordings/csm.wav" preload="metadata"></audio>
+      </div>
+
+      <!-- Dia-2B -->
+      <div class="card" data-model="dia2">
+        <div class="card-top">
+          <div class="card-name"><a href="https://huggingface.co/nari-labs/Dia2-1B" target="_blank">Dia-2B</a></div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-blue">1B / 2B</span>
+          <span class="badge badge-yes">Multi-Speaker</span>
+        </div>
+        <div class="card-note good">Multiple persona dialogue sounds quite natural</div>
+        <div class="player">
+          <button class="play-btn" onclick="togglePlay('dia2')">
+            <svg id="icon-dia2" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+          </button>
+          <div class="player-controls">
+            <input type="range" class="progress-bar" id="prog-dia2" value="0" min="0" max="100" step="0.1" oninput="seek('dia2',this.value)">
+            <div class="time-display" id="time-dia2">0:00 / 0:00</div>
+          </div>
+        </div>
+        <audio id="audio-dia2" src="recordings/dia2.wav" preload="metadata"></audio>
+      </div>
+
+      <!-- DiVA -->
+      <div class="card" data-model="diva">
+        <div class="card-top">
+          <div class="card-name"><a href="https://huggingface.co/WillHeld/DiVA-llama-3-v0-8b" target="_blank">DiVA</a></div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-blue">8B</span>
+          <span class="badge badge-no">No Streaming</span>
+        </div>
+        <div class="card-note bad">Ugly, robotic</div>
+        <div class="player">
+          <button class="play-btn" onclick="togglePlay('diva')">
+            <svg id="icon-diva" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+          </button>
+          <div class="player-controls">
+            <input type="range" class="progress-bar" id="prog-diva" value="0" min="0" max="100" step="0.1" oninput="seek('diva',this.value)">
+            <div class="time-display" id="time-diva">0:00 / 0:00</div>
+          </div>
+        </div>
+        <audio id="audio-diva" src="recordings/diva.wav" preload="metadata"></audio>
+      </div>
+
+      <!-- fishspeech -->
+      <div class="card" data-model="fishspeech">
+        <div class="card-top">
+          <div class="card-name"><a href="https://huggingface.co/fishaudio/s1-mini" target="_blank">fishspeech S1 mini</a></div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-blue">0.5B</span>
+          <span class="badge badge-yes">49 Emotion Tags</span>
+          <span class="badge badge-warn">Non-Commercial</span>
+        </div>
+        <div class="card-note bad">Sounds funny</div>
+        <div class="player">
+          <button class="play-btn" onclick="togglePlay('fishspeech')">
+            <svg id="icon-fishspeech" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+          </button>
+          <div class="player-controls">
+            <input type="range" class="progress-bar" id="prog-fishspeech" value="0" min="0" max="100" step="0.1" oninput="seek('fishspeech',this.value)">
+            <div class="time-display" id="time-fishspeech">0:00 / 0:00</div>
+          </div>
+        </div>
+        <audio id="audio-fishspeech" src="recordings/fishspeech.wav" preload="metadata"></audio>
+      </div>
+
+      <!-- Kokoro -->
+      <div class="card" data-model="kokoro">
+        <div class="card-top">
+          <div class="card-name"><a href="https://huggingface.co/hexgrad/Kokoro-82M" target="_blank">Kokoro-82M TTS</a></div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-blue">82M ⚡</span>
+          <span class="badge badge-yes">Apache 2.0</span>
+          <span class="badge badge-blue">54 Voices</span>
+        </div>
+        <div class="card-note good">Very natural — surprising</div>
+        <div class="player">
+          <button class="play-btn" onclick="togglePlay('kokoro')">
+            <svg id="icon-kokoro" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+          </button>
+          <div class="player-controls">
+            <input type="range" class="progress-bar" id="prog-kokoro" value="0" min="0" max="100" step="0.1" oninput="seek('kokoro',this.value)">
+            <div class="time-display" id="time-kokoro">0:00 / 0:00</div>
+          </div>
+        </div>
+        <audio id="audio-kokoro" src="recordings/kokoro.wav" preload="metadata"></audio>
+      </div>
+
+      <!-- Magpie -->
+      <div class="card" data-model="magpie">
+        <div class="card-top">
+          <div class="card-name"><a href="https://huggingface.co/nvidia/magpie_tts_multilingual_357m" target="_blank">Magpie TTS 357M</a></div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-blue">357M</span>
+          <span class="badge badge-yes">Streaming</span>
+          <span class="badge badge-blue">50K hrs training</span>
+        </div>
+        <div class="card-note good">Very natural — surprising</div>
+        <div class="player">
+          <button class="play-btn" onclick="togglePlay('magpie')">
+            <svg id="icon-magpie" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+          </button>
+          <div class="player-controls">
+            <input type="range" class="progress-bar" id="prog-magpie" value="0" min="0" max="100" step="0.1" oninput="seek('magpie',this.value)">
+            <div class="time-display" id="time-magpie">0:00 / 0:00</div>
+          </div>
+        </div>
+        <audio id="audio-magpie" src="recordings/magpie.wav" preload="metadata"></audio>
+      </div>
+
+      <!-- Ming -->
+      <div class="card" data-model="mingomni">
+        <div class="card-top">
+          <div class="card-name"><a href="https://huggingface.co/inclusionAI/Ming-omni-tts-0.5B" target="_blank">Ming-Omni-TTS-0.5B</a></div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-blue">0.5B</span>
+          <span class="badge badge-yes">Voice Clone</span>
+          <span class="badge badge-yes">Emotions</span>
+        </div>
+        <div class="card-note bad">Ugly</div>
+        <div class="player">
+          <button class="play-btn" onclick="togglePlay('mingomni')">
+            <svg id="icon-mingomni" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+          </button>
+          <div class="player-controls">
+            <input type="range" class="progress-bar" id="prog-mingomni" value="0" min="0" max="100" step="0.1" oninput="seek('mingomni',this.value)">
+            <div class="time-display" id="time-mingomni">0:00 / 0:00</div>
+          </div>
+        </div>
+        <audio id="audio-mingomni" src="recordings/mingomni.wav" preload="metadata"></audio>
+      </div>
+
+      <!-- PersonaPlex — no audio -->
+      <div class="card no-audio">
+        <div class="card-top">
+          <div class="card-name"><a href="https://huggingface.co/nvidia/personaplex-7b-v1" target="_blank">NVIDIA PersonaPlex</a></div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-blue">7B</span>
+          <span class="badge badge-yes">Full-Duplex</span>
+          <span class="badge badge-cloud">Linux + NVIDIA GPU</span>
+        </div>
+        <div class="card-note na">N/A — not tested locally</div>
+        <div class="no-audio-label">No sample recorded</div>
+      </div>
+
+      <!-- CosyVoice 3 — no audio -->
+      <div class="card no-audio">
+        <div class="card-top">
+          <div class="card-name"><a href="https://huggingface.co/FunAudioLLM/Fun-CosyVoice3-0.5B-2512" target="_blank">CosyVoice 3</a></div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-blue">0.5B</span>
+          <span class="badge badge-yes">~150ms</span>
+          <span class="badge badge-yes">Voice Clone</span>
+        </div>
+        <div class="card-note na">Not yet tested — implementation too tedious</div>
+        <div class="no-audio-label">No sample recorded</div>
+      </div>
+
+      <!-- Kimi-Audio — no audio -->
+      <div class="card no-audio">
+        <div class="card-top">
+          <div class="card-name"><a href="https://huggingface.co/moonshotai/Kimi-Audio-7B-Instruct" target="_blank">Kimi-Audio-7B</a></div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-blue">7B</span>
+          <span class="badge badge-cloud">CUDA only</span>
+          <span class="badge badge-yes">Streaming</span>
+        </div>
+        <div class="card-note na">Not tested</div>
+        <div class="no-audio-label">No sample recorded</div>
+      </div>
+
+    </div><!-- /main-cards -->
+
+    <!-- Bonus models -->
+    <div class="subsection-heading">§ 1b — Additional Models <span class="badge badge-bonus" style="font-size:11px;vertical-align:middle;">Tested Separately</span></div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">These models were tested but not part of the original comparison scope. Both are significant — Qwen3-TTS has the fastest published latency (97ms) of any model in this entire set.</p>
+
+    <div class="cards-grid">
+
+      <!-- Moshi -->
+      <div class="card bonus" data-model="moshi">
+        <div class="card-top">
+          <div class="card-name"><a href="https://github.com/kyutai-labs/moshi" target="_blank">Moshi (Kyutai)</a></div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-blue">7B</span>
+          <span class="badge badge-yes">~160ms</span>
+          <span class="badge badge-yes">Full-Duplex</span>
+          <span class="badge badge-dashed">CC-BY 4.0</span>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Inner monologue training · Mimi codec 12.5Hz · English only · 2 fixed voices · 2.1T token pretrain</div>
+        <div class="player">
+          <button class="play-btn" onclick="togglePlay('moshi')">
+            <svg id="icon-moshi" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+          </button>
+          <div class="player-controls">
+            <input type="range" class="progress-bar" id="prog-moshi" value="0" min="0" max="100" step="0.1" oninput="seek('moshi',this.value)">
+            <div class="time-display" id="time-moshi">0:00 / 0:00</div>
+          </div>
+        </div>
+        <audio id="audio-moshi" src="recordings/moshi.wav" preload="metadata"></audio>
+      </div>
+
+      <!-- Qwen3-TTS -->
+      <div class="card bonus" data-model="qwen">
+        <div class="card-top">
+          <div class="card-name"><a href="https://github.com/QwenLM/Qwen3-TTS" target="_blank">Qwen3-TTS (Alibaba)</a></div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-blue">1.7B / 0.6B</span>
+          <span class="badge badge-yes" style="background:#fef9c3;color:#b45309;border:1px solid #fcd34d;">⚡ 97ms fastest</span>
+          <span class="badge badge-yes">Voice Clone</span>
+          <span class="badge badge-yes">Emotions</span>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Dual-Track streaming · 10 languages + 10 Chinese dialects · 3-sec clone · Voice Design mode · Apache 2.0</div>
+        <div class="player">
+          <button class="play-btn" onclick="togglePlay('qwen')">
+            <svg id="icon-qwen" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+          </button>
+          <div class="player-controls">
+            <input type="range" class="progress-bar" id="prog-qwen" value="0" min="0" max="100" step="0.1" oninput="seek('qwen',this.value)">
+            <div class="time-display" id="time-qwen">0:00 / 0:00</div>
+          </div>
+        </div>
+        <audio id="audio-qwen" src="recordings/qwen.wav" preload="metadata"></audio>
+      </div>
+
+    </div><!-- /bonus cards -->
+  </section>
+
+  <!-- ─── § 2: TABLE A ─── -->
+  <section class="section" id="capabilities">
+    <h2 class="section-heading"><span class="num">§ 2</span> Capabilities</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Size</th>
+            <th>Latency</th>
+            <th>Streaming / Full-Duplex</th>
+            <th>Mac</th>
+            <th>Voice Clone</th>
+            <th>Emotions</th>
+            <th>Watermarking</th>
+            <th>License</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="model-cell"><a href="https://aws.amazon.com/ai/generative-ai/nova/sonic/" target="_blank">AWS Nova Sonic v2</a></td>
+            <td>—</td>
+            <td>Ultra-low</td>
+            <td><span class="badge badge-yes">Full-Duplex</span></td>
+            <td><span class="badge badge-cloud">Cloud only</span></td>
+            <td><span class="badge badge-dashed">?</span></td>
+            <td><span class="badge badge-yes">Yes</span></td>
+            <td><span class="badge badge-yes">Yes</span></td>
+            <td>Proprietary</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/nvidia/personaplex-7b-v1" target="_blank">NVIDIA PersonaPlex</a></td>
+            <td>7B</td>
+            <td>170ms / 240ms</td>
+            <td><span class="badge badge-yes">Full-Duplex</span></td>
+            <td><span class="badge badge-cloud">Linux+GPU</span></td>
+            <td><span class="badge badge-yes">Yes (SSIM 0.650)</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-dashed">?</span></td>
+            <td>NVIDIA OML</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/microsoft/VibeVoice-Realtime-0.5B" target="_blank">VibeVoice-Realtime-0.5B</a></td>
+            <td>0.5B</td>
+            <td>~300ms</td>
+            <td><span class="badge badge-yes">Streaming</span></td>
+            <td><span class="badge badge-yes">Yes</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-yes">Dual watermark</span></td>
+            <td>MIT</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/ResembleAI/chatterbox" target="_blank">Chatterbox</a></td>
+            <td>0.5B</td>
+            <td>&lt;200ms</td>
+            <td><span class="badge badge-dashed">Unclear</span></td>
+            <td><span class="badge badge-yes">Yes</span></td>
+            <td><span class="badge badge-yes">Zero-shot</span></td>
+            <td><span class="badge badge-yes">Exaggeration slider</span></td>
+            <td><span class="badge badge-yes">Perth watermark</span></td>
+            <td>MIT</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/FunAudioLLM/Fun-CosyVoice3-0.5B-2512" target="_blank">CosyVoice 3</a></td>
+            <td>0.5B</td>
+            <td>~150ms</td>
+            <td><span class="badge badge-yes">Bi-streaming</span></td>
+            <td><span class="badge badge-warn">Not yet</span></td>
+            <td><span class="badge badge-yes">Zero-shot + XL</span></td>
+            <td><span class="badge badge-yes">[laugh] tags</span></td>
+            <td><span class="badge badge-dashed">?</span></td>
+            <td>Apache 2.0</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/nari-labs/Dia2-1B" target="_blank">Dia-2B</a></td>
+            <td>1B / 2B</td>
+            <td>First words</td>
+            <td><span class="badge badge-yes">Partial stream</span></td>
+            <td><span class="badge badge-yes">Yes</span></td>
+            <td><span class="badge badge-yes">Speaker prefixes</span></td>
+            <td><span class="badge badge-no">[S1][S2] only</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td>Apache 2.0</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/WillHeld/DiVA-llama-3-v0-8b" target="_blank">DiVA</a></td>
+            <td>8B</td>
+            <td>—</td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-warn">Very difficult</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td>Apache 2.0</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/fishaudio/s1-mini" target="_blank">fishspeech S1 mini</a></td>
+            <td>0.5B / 4B</td>
+            <td>Slow (Mac)</td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-warn">Painful</span></td>
+            <td><span class="badge badge-yes">Yes</span></td>
+            <td><span class="badge badge-yes">49 tags</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-warn">CC-BY-NC-SA-4.0</span></td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/moonshotai/Kimi-Audio-7B-Instruct" target="_blank">Kimi-Audio-7B</a></td>
+            <td>7B</td>
+            <td>—</td>
+            <td><span class="badge badge-yes">Chunk streaming</span></td>
+            <td><span class="badge badge-cloud">CUDA only</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-yes">SER (recognition)</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td>MIT / Apache 2.0</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/hexgrad/Kokoro-82M" target="_blank">Kokoro-82M TTS</a></td>
+            <td><strong>82M</strong></td>
+            <td>Blazing fast</td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-yes">Yes</span></td>
+            <td><span class="badge badge-no">Excluded</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td>Apache 2.0</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/nvidia/magpie_tts_multilingual_357m" target="_blank">Magpie TTS 357M</a></td>
+            <td>357M</td>
+            <td>Very fast</td>
+            <td><span class="badge badge-yes">20s chunks</span></td>
+            <td><span class="badge badge-yes">Yes</span></td>
+            <td><span class="badge badge-no">Removed</span></td>
+            <td><span class="badge badge-no">Enterprise only</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td>NVIDIA OML</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/inclusionAI/Ming-omni-tts-0.5B" target="_blank">Ming-Omni-TTS-0.5B</a></td>
+            <td>0.5B</td>
+            <td>3.1Hz</td>
+            <td><span class="badge badge-dashed">?</span></td>
+            <td><span class="badge badge-yes">Yes</span></td>
+            <td><span class="badge badge-yes">Zero-shot</span></td>
+            <td><span class="badge badge-yes">Fine-grained 76.7%</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td>Apache 2.0</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/sesame/csm-1b" target="_blank">CSM-1B</a></td>
+            <td>1B</td>
+            <td>Slow</td>
+            <td><span class="badge badge-dashed">?</span></td>
+            <td><span class="badge badge-yes">Yes</span></td>
+            <td><span class="badge badge-warn">Needs fine-tune</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td>Apache 2.0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ─── § 3: TABLE B ─── -->
+  <section class="section" id="details">
+    <h2 class="section-heading"><span class="num">§ 3</span> Details, Features &amp; Personal Notes</h2>
+    <p style="font-size:12.5px;color:var(--muted);margin-bottom:14px;">The <span style="background:var(--warm);padding:1px 6px;border-radius:3px;font-style:italic;">highlighted</span> Personal Notes column contains direct subjective assessments from listening tests.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Language Support</th>
+            <th>Notable Features</th>
+            <th>Personal Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="model-cell"><a href="https://aws.amazon.com/ai/generative-ai/nova/sonic/" target="_blank">AWS Nova Sonic v2</a> <button class="mini-play" onclick="togglePlay('novasonic')">▶</button></td>
+            <td>Multilingual</td>
+            <td>Prompt-injectable emotions: <code>[laugh]</code>, <code>[sigh]</code></td>
+            <td class="notes-cell">Very natural</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/nvidia/personaplex-7b-v1" target="_blank">NVIDIA PersonaPlex</a></td>
+            <td>English only (24kHz)</td>
+            <td>Dual-stream; 90.8% turn-taking TOR; 95% interruption TOR; text prompt persona</td>
+            <td class="notes-cell">N/A — not tested locally</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/microsoft/VibeVoice-Realtime-0.5B" target="_blank">VibeVoice-Realtime</a> <button class="mini-play" onclick="togglePlay('vibevoice')">▶</button></td>
+            <td>English + 9 experimental (DE FR IT JA KO NL PL PT ES)</td>
+            <td>3200× downsampling tokenizer; diffusion decoder; 10 min continuous; 90-min multi-speaker variant</td>
+            <td class="notes-cell">Surprisingly natural — almost the same feel as Nova Sonic 2</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/ResembleAI/chatterbox" target="_blank">Chatterbox</a> <button class="mini-play" onclick="togglePlay('chatterbox')">▶</button></td>
+            <td>23 languages incl. Arabic, Hebrew, Swahili, Hindi</td>
+            <td>0.5B Llama backbone; 0.5M hrs training; first open-source TTS with emotion exaggeration; CFG/Pace control</td>
+            <td class="notes-cell">Very natural when you tune the correct exaggeration and weights</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/FunAudioLLM/Fun-CosyVoice3-0.5B-2512" target="_blank">CosyVoice 3</a></td>
+            <td>9 languages + 18+ Chinese dialects</td>
+            <td>Pinyin + CMU pronunciation inpainting; cross-lingual zero-shot clone; 77.4–78% speaker sim; 1.68% WER post-RL</td>
+            <td class="notes-cell">Not yet tested — implementation too tedious</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/nari-labs/Dia2-1B" target="_blank">Dia-2B</a> <button class="mini-play" onclick="togglePlay('dia2')">▶</button></td>
+            <td>English only (max 2 min)</td>
+            <td>[S1] / [S2] speaker tags; word-level timestamps; Kyutai Mimi codec; starts generating before full text</td>
+            <td class="notes-cell">Multiple persona dialogue sounds quite natural</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/WillHeld/DiVA-llama-3-v0-8b" target="_blank">DiVA</a> <button class="mini-play" onclick="togglePlay('diva')">▶</button></td>
+            <td>Multiple (CommonVoice)</td>
+            <td>End-to-end voice assistant; distillation from Llama-3.1-8B; multimodal input</td>
+            <td class="notes-cell">Ugly, robotic</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/fishaudio/s1-mini" target="_blank">fishspeech S1 mini</a> <button class="mini-play" onclick="togglePlay('fishspeech')">▶</button></td>
+            <td>13 languages (EN ZH JA DE FR ES KO AR RU NL IT PL PT)</td>
+            <td>2M+ hrs training; 49 emotion tags: (laughing)(sobbing)(whispering)(angry)(proud)(joyful)…; online RLHF</td>
+            <td class="notes-cell">Sounds funny</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/moonshotai/Kimi-Audio-7B-Instruct" target="_blank">Kimi-Audio-7B</a></td>
+            <td>English, Chinese (13M hrs training)</td>
+            <td>ASR + AQA + AAC + SER + SEC/ASC; hybrid acoustic + semantic tokens; chunk-wise streaming</td>
+            <td class="notes-cell">Not tested</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/hexgrad/Kokoro-82M" target="_blank">Kokoro-82M TTS</a> <button class="mini-play" onclick="togglePlay('kokoro')">▶</button></td>
+            <td>9 languages, 54 voices (🇺🇸🇬🇧🇯🇵🇨🇳🇪🇸🇫🇷🇮🇳🇮🇹🇧🇷)</td>
+            <td>StyleTTS 2 + ISTFTNet vocoder; ~$1,000 compute; blazing fast on Mac</td>
+            <td class="notes-cell">Very natural — surprising</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/nvidia/magpie_tts_multilingual_357m" target="_blank">Magpie TTS 357M</a> <button class="mini-play" onclick="togglePlay('magpie')">▶</button></td>
+            <td>9 languages (EN ES DE FR VI IT ZH HI JA)</td>
+            <td>5 fixed speakers; multi-codebook prediction; 50K hrs training; built-in text normalization</td>
+            <td class="notes-cell">Very natural — surprising</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/inclusionAI/Ming-omni-tts-0.5B" target="_blank">Ming-Omni-TTS</a> <button class="mini-play" onclick="togglePlay('mingomni')">▶</button></td>
+            <td>Chinese (primary), English, Cantonese</td>
+            <td>Unified speech + ambient sound + music; math/chemical equations; rate/pitch/volume/emotion/dialect knobs; 0.83% WER</td>
+            <td class="notes-cell">Ugly</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/sesame/csm-1b" target="_blank">CSM-1B</a> <button class="mini-play" onclick="togglePlay('csm')">▶</button></td>
+            <td>English primary</td>
+            <td>Context-aware generation; multi-speaker dialogue; CUDA graph compilation; native Transformers integration</td>
+            <td class="notes-cell">Sounds great</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ─── § 4: TABLE C ─── -->
+  <section class="section" id="training">
+    <h2 class="section-heading"><span class="num">§ 4</span> Training Data &amp; Evaluation Metrics</h2>
+    <p style="font-size:12.5px;color:var(--muted);margin-bottom:14px;"><span class="black-square">■</span> = data not publicly disclosed.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Training Dataset(s)</th>
+            <th>Size</th>
+            <th>Eval Benchmark</th>
+            <th>Key Metrics</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="model-cell">AWS Nova Sonic v2</td>
+            <td><span class="black-square">■</span></td>
+            <td><span class="black-square">■</span></td>
+            <td><span class="black-square">■</span></td>
+            <td><span class="black-square">■</span></td>
+          </tr>
+          <tr>
+            <td class="model-cell">NVIDIA PersonaPlex</td>
+            <td>Fisher English (LDC2004S13 + LDC2005S13)</td>
+            <td>~7,303 conversations</td>
+            <td>FullDuplexBench</td>
+            <td class="metric">Spk Sim: <strong>0.650</strong> · Turn TOR: <strong>90.8%</strong> · Interrupt TOR: <strong>95.0%</strong> · Latency: <strong>240ms</strong></td>
+          </tr>
+          <tr>
+            <td class="model-cell">VibeVoice-Realtime</td>
+            <td>Not specified (base: Qwen2.5-0.5B)</td>
+            <td><span class="black-square">■</span></td>
+            <td>LibriSpeech test-clean · SEED test-en</td>
+            <td class="metric">WER: <strong>2.00%</strong> · Spk Sim: <strong>0.695</strong> (LS) · WER: <strong>2.05%</strong> · Spk Sim: <strong>0.633</strong> (SEED)</td>
+          </tr>
+          <tr>
+            <td class="model-cell">Chatterbox</td>
+            <td>Freely available internet audio</td>
+            <td><strong>0.5M hours</strong></td>
+            <td><span class="black-square">■</span></td>
+            <td><span class="black-square">■</span> (no metrics published)</td>
+          </tr>
+          <tr>
+            <td class="model-cell">CosyVoice 3</td>
+            <td><span class="black-square">■</span></td>
+            <td><span class="black-square">■</span></td>
+            <td>Internal CN / EN / Hard sets</td>
+            <td class="metric">ZH CER: <strong>1.21%→0.81%</strong> (post-RL) · ZH Sim: <strong>78.0%</strong> · EN WER: <strong>2.24%→1.68%</strong> · EN Sim: <strong>71.8%</strong></td>
+          </tr>
+          <tr>
+            <td class="model-cell">Dia-2B</td>
+            <td><span class="black-square">■</span></td>
+            <td><span class="black-square">■</span></td>
+            <td><span class="black-square">■</span></td>
+            <td><span class="black-square">■</span></td>
+          </tr>
+          <tr>
+            <td class="model-cell">DiVA</td>
+            <td>Mozilla CommonVoice 17.0</td>
+            <td><span class="black-square">■</span></td>
+            <td><span class="black-square">■</span></td>
+            <td class="metric">7,000 grad steps · batch 512 · 11 hrs on TPU v4-256</td>
+          </tr>
+          <tr>
+            <td class="model-cell">fishspeech S1 mini</td>
+            <td>Internal proprietary corpus</td>
+            <td><strong>2M+ hours</strong></td>
+            <td>Internal</td>
+            <td class="metric">WER: <strong>0.011</strong> · CER: <strong>0.005</strong> · Spk Dist: <strong>0.380</strong></td>
+          </tr>
+          <tr>
+            <td class="model-cell">Kimi-Audio-7B</td>
+            <td><span class="black-square">■</span> (diverse audio + text)</td>
+            <td><strong>13M hours</strong></td>
+            <td>See <a href="https://raw.githubusercontent.com/MoonshotAI/Kimi-Audio/master/assets/kimia_report.pdf" target="_blank">technical report</a></td>
+            <td><span class="black-square">■</span></td>
+          </tr>
+          <tr>
+            <td class="model-cell">Kokoro-82M TTS</td>
+            <td>Public domain · Apache/MIT · Koniwa (CC BY 3.0) · SIWIS (CC BY 4.0) · synthetic</td>
+            <td><strong>&lt;few hundred hours</strong></td>
+            <td>See EVAL.md</td>
+            <td><span class="black-square">■</span></td>
+          </tr>
+          <tr>
+            <td class="model-cell">Magpie TTS 357M</td>
+            <td>Hi-FiTTS · HiFiTTS-2 · LibriTTS · CML-TTS · LSVSC · InfoRe-1/2 · AI4Bharat · Emilia YODAS · CommonVoice + internal</td>
+            <td><strong>50,000 hours</strong></td>
+            <td>LibriTTS test-clean · CML-TTS ES/FR/DE</td>
+            <td class="metric">CER EN: <strong>0.34%</strong> ES: <strong>1.14%</strong> FR: <strong>2.70%</strong> DE: <strong>0.66%</strong> · SV-SSIM EN: <strong>0.835</strong> ES: <strong>0.715</strong></td>
+          </tr>
+          <tr>
+            <td class="model-cell">Ming-Omni-TTS</td>
+            <td><span class="black-square">■</span></td>
+            <td><span class="black-square">■</span></td>
+            <td>WSYue · WSC · CV3 · Seed-TTS · InstructTTS-ZH</td>
+            <td class="metric">Dialect: <strong>96%</strong> (WSYue) <strong>86%</strong> (WSC) <strong>93%</strong> (CAN) · Emotion: <strong>76.7%</strong> · Clone WER: <strong>0.83%</strong> · CER: <strong>1.97%</strong></td>
+          </tr>
+          <tr>
+            <td class="model-cell">CSM-1B</td>
+            <td><span class="black-square">■</span></td>
+            <td><span class="black-square">■</span></td>
+            <td><span class="black-square">■</span></td>
+            <td><span class="black-square">■</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ─── § 5: SUMMARY ─── -->
+  <section class="section" id="summary">
+    <h2 class="section-heading"><span class="num">§ 5</span> Quick Summary</h2>
+    <div class="summary-grid">
+      <div class="summary-item highlight">
+        <div class="crit">Lowest latency</div>
+        <div class="best">Qwen3-TTS (97ms) · CosyVoice 3 (~150ms) · Chatterbox (&lt;200ms)</div>
+      </div>
+      <div class="summary-item highlight">
+        <div class="crit">True full-duplex</div>
+        <div class="best">Nova Sonic v2 · PersonaPlex · Moshi · Qwen3-TTS</div>
+      </div>
+      <div class="summary-item">
+        <div class="crit">Best naturalness</div>
+        <div class="best">Nova Sonic v2 · VibeVoice · Kokoro-82M · Magpie · CSM-1B</div>
+      </div>
+      <div class="summary-item">
+        <div class="crit">Most languages</div>
+        <div class="best">Chatterbox (23) · CosyVoice 3 (9+18 dialects) · fishspeech (13)</div>
+      </div>
+      <div class="summary-item">
+        <div class="crit">Richest emotions</div>
+        <div class="best">fishspeech (49 tags) · Ming (fine-grained) · Chatterbox (slider)</div>
+      </div>
+      <div class="summary-item">
+        <div class="crit">Voice cloning</div>
+        <div class="best">Chatterbox · CosyVoice 3 · Ming · Qwen3-TTS (3-sec) · PersonaPlex</div>
+      </div>
+      <div class="summary-item">
+        <div class="crit">Watermarking</div>
+        <div class="best">VibeVoice (dual) · Chatterbox (Perth)</div>
+      </div>
+      <div class="summary-item">
+        <div class="crit">Lightest + fastest</div>
+        <div class="best">Kokoro-82M (82M) · Magpie (357M) · VibeVoice (0.5B)</div>
+      </div>
+      <div class="summary-item">
+        <div class="crit">Free commercial use</div>
+        <div class="best">Kokoro · VibeVoice · CSM-1B · Chatterbox · Magpie · CosyVoice 3 · Qwen3-TTS</div>
+      </div>
+      <div class="summary-item highlight" style="border-color:#fca5a5;background:#fef2f2;">
+        <div class="crit" style="color:#b91c1c;">Non-commercial only</div>
+        <div class="best" style="color:#7f1d1d;">fishspeech S1 mini (CC-BY-NC-SA-4.0)</div>
+      </div>
+      <div class="summary-item">
+        <div class="crit">Efficiency winner</div>
+        <div class="best">Kokoro-82M — &lt;few hundred hrs training, 82M params → "very natural"</div>
+      </div>
+      <div class="summary-item">
+        <div class="crit">Multi-speaker dialogue</div>
+        <div class="best">Dia-2B ([S1][S2]) · CSM-1B (context-carry) · VibeVoice (90-min)</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Open-Source TTS Benchmark · Personal Experiments · March 2026
+  </footer>
+
+</div><!-- /paper -->
+
+<!-- ─── AUDIO PLAYER JS ─── -->
+<audio id="audio-moshi" src="recordings/moshi.wav" preload="metadata"></audio>
+<audio id="audio-qwen" src="recordings/qwen.wav" preload="metadata"></audio>
+
+<script>
+  let currentModel = null;
+
+  const PAUSE_ICON = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+  const PLAY_ICON  = '<polygon points="5,3 19,12 5,21"/>';
+
+  function fmt(s) {
+    if (isNaN(s)) return '0:00';
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60).toString().padStart(2, '0');
+    return `${m}:${sec}`;
+  }
+
+  function togglePlay(id) {
+    const audio = document.getElementById('audio-' + id);
+    if (!audio) return;
+
+    if (currentModel && currentModel !== id) {
+      const prev = document.getElementById('audio-' + currentModel);
+      if (prev) prev.pause();
+      setIcon(currentModel, false);
+      const prevCard = document.querySelector(`[data-model="${currentModel}"]`);
+      if (prevCard) prevCard.classList.remove('playing');
+    }
+
+    if (audio.paused) {
+      audio.play();
+      currentModel = id;
+      setIcon(id, true);
+      const card = document.querySelector(`[data-model="${id}"]`);
+      if (card) card.classList.add('playing');
+    } else {
+      audio.pause();
+      currentModel = null;
+      setIcon(id, false);
+      const card = document.querySelector(`[data-model="${id}"]`);
+      if (card) card.classList.remove('playing');
+    }
+  }
+
+  function setIcon(id, playing) {
+    const icon = document.getElementById('icon-' + id);
+    if (icon) icon.innerHTML = playing ? PAUSE_ICON : PLAY_ICON;
+  }
+
+  function seek(id, val) {
+    const audio = document.getElementById('audio-' + id);
+    if (audio && audio.duration) {
+      audio.currentTime = (val / 100) * audio.duration;
+    }
+  }
+
+  function bindAudio(id) {
+    const audio = document.getElementById('audio-' + id);
+    const prog  = document.getElementById('prog-' + id);
+    const time  = document.getElementById('time-' + id);
+    if (!audio || !prog || !time) return;
+
+    audio.addEventListener('timeupdate', () => {
+      if (audio.duration) {
+        prog.value = (audio.currentTime / audio.duration) * 100;
+        time.textContent = `${fmt(audio.currentTime)} / ${fmt(audio.duration)}`;
+      }
+    });
+
+    audio.addEventListener('ended', () => {
+      setIcon(id, false);
+      prog.value = 0;
+      currentModel = null;
+      const card = document.querySelector(`[data-model="${id}"]`);
+      if (card) card.classList.remove('playing');
+    });
+
+    audio.addEventListener('loadedmetadata', () => {
+      if (time) time.textContent = `0:00 / ${fmt(audio.duration)}`;
+    });
+  }
+
+  const models = ['novasonic','vibevoice','chatterbox','csm','dia2','diva',
+                  'fishspeech','kokoro','magpie','mingomni','moshi','qwen'];
+  models.forEach(bindAudio);
+</script>
+
+</body>
+</html>
