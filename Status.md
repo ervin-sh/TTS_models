@@ -22,6 +22,7 @@ Data sourced from HuggingFace model pages, GitHub repos, and hands-on testing.
 | [Magpie TTS 357M](https://huggingface.co/nvidia/magpie_tts_multilingual_357m) | 357M | Extremely fast (no official claim) | Yes (designed for streaming agents, 20s chunks) | **Yes** | No (zero-shot explicitly removed) | No (enterprise NIM only, not open model) | No | No | NVIDIA Open Model License |
 | [Ming-Omni-TTS-0.5B](https://huggingface.co/inclusionAI/Ming-omni-tts-0.5B) | 0.5B | 3.1Hz (Patch-by-Patch compression) | Not stated | **Yes** | **Yes** (zero-shot) | **Yes** (fine-grained, 76.7% accuracy) | No | No | Apache 2.0 |
 | [CSM-1B](https://huggingface.co/sesame/csm-1b) | 1B | Slow | Not stated | **Yes** | Limited (base model — requires fine-tuning for specific voices) | No | No | No | Apache 2.0 |
+| [Maya1](https://huggingface.co/maya-research/maya1) | 3B | **Sub-100ms** (with vLLM) | **Yes – streaming** | **Yes (MPS/CPU)** | No | **Yes** (20+ inline tags `<laugh>` `<whisper>`) | No | No | **Apache 2.0** |
 
 ---
 
@@ -42,6 +43,7 @@ Data sourced from HuggingFace model pages, GitHub repos, and hands-on testing.
 | [Magpie TTS 357M](https://huggingface.co/nvidia/magpie_tts_multilingual_357m) | English, Spanish, German, French, Vietnamese, Italian, Mandarin Chinese, Hindi, Japanese (9 languages) | 5 fixed speakers (Sofia, Aria, Jason, Leo, John Van Stan); multi-codebook prediction; local transformer refinement; trained on 50K hours; built-in text normalization; designed for streaming voice agents | Very natural — surprising |
 | [Ming-Omni-TTS-0.5B](https://huggingface.co/inclusionAI/Ming-omni-tts-0.5B) | Chinese (primary), English, Cantonese | Industry-first unified generation of speech + ambient sound + music in single channel; handles math expressions and chemical equations; vocal controls: rate, pitch, volume, emotion, dialect; 0.83% WER (Chinese eval) | Ugly |
 | [CSM-1B](https://huggingface.co/sesame/csm-1b) | English (primary; limited non-English due to data contamination) | Context-aware generation; multi-speaker dialogue; batch inference; CUDA graph compilation; fine-tuning compatible; native Transformers integration | Sounds great |
+| [Maya1](https://huggingface.co/maya-research/maya1) | English (multi-accent) | Natural language zero-shot voice descriptions; 20+ emotion tags `<laugh>` `<whisper>` `<cry>` `<sigh>`; Llama-style 3B + SNAC codec 24kHz; vLLM production infra; prefix caching for repeated voices; runs on Mac via MPS/CPU | Very nice — ElevenLabs quality |
 
 ---
 
@@ -64,6 +66,7 @@ Data sourced from HuggingFace model pages, GitHub repos, and hands-on testing.
 | [Magpie TTS 357M](https://huggingface.co/nvidia/magpie_tts_multilingual_357m) | Hi-FiTTS · HiFiTTS-2 · LibriTTS · CML-TTS · LSVSC · InfoRe-1/2 · AI4Bharat · Emilia YODAS · Common Voice + internal | **50,000 hours** (38K training) | LibriTTS test-clean · CML-TTS (ES/FR/DE) | CER: **0.34%** (EN) · **1.14%** (ES) · **2.70%** (FR) · **0.66%** (DE) · SV-SSIM: **0.835** (EN) · **0.715** (ES) · **0.703** (FR) · **0.626** (DE) |
 | [Ming-Omni-TTS-0.5B](https://huggingface.co/inclusionAI/Ming-omni-tts-0.5B) | ■ | ■ | WSYue-TTS-Eval · WSC-TTS-Eval · CV3-Eval · Seed-TTS-Eval · InstructTTS-Eval-ZH | Dialect accuracy: **96%** (WSYue) · **86%** (WSC) · **93%** (Cantonese) · Emotion accuracy: **76.7%** (CV3 avg) · Voice clone WER: **0.83%** · Text norm CER: **1.97%** · Instruction following: **76.20%** · Inference rate: **3.1 Hz** |
 | [CSM-1B](https://huggingface.co/sesame/csm-1b) | ■ | ■ | ■ | ■ |
+| [Maya1](https://huggingface.co/maya-research/maya1) | Internet-scale English speech + proprietary curated studio recordings (human-verified, MFA-aligned, MinHash-LSH text deduped, Chromaprint audio deduped) | ■ | ■ | ■ |
 
 
 ---
@@ -72,14 +75,14 @@ Data sourced from HuggingFace model pages, GitHub repos, and hands-on testing.
 
 | Criteria | Best Option(s) |
 | --- | --- |
-| Lowest latency | CosyVoice 3 (~150ms), Chatterbox (<200ms), PersonaPlex (170ms) |
+| Lowest latency | Maya1 (sub-100ms, vLLM), CosyVoice 3 (~150ms), Chatterbox (<200ms), PersonaPlex (170ms) |
 | Full duplex | Nova Sonic v2, PersonaPlex |
-| Best naturalness (personal) | Nova Sonic v2, VibeVoice, Kokoro-82M, Magpie, CSM-1B |
+| Best naturalness (personal) | Nova Sonic v2, Maya1, VibeVoice, Kokoro-82M, Magpie, CSM-1B |
 | Most languages | Chatterbox (23), CosyVoice 3 (9 + 18 dialects), fishspeech (13) |
-| Richest emotion control | fishspeech S1 mini (49 tags), Ming (fine-grained), Chatterbox (exaggeration) |
+| Richest emotion control | fishspeech S1 mini (49 tags), Ming (fine-grained), Maya1 (20+ inline tags), Chatterbox (exaggeration) |
 | Voice cloning | Chatterbox, CosyVoice 3, Ming, PersonaPlex |
 | Watermarking | VibeVoice (dual), Chatterbox (Perth) |
 | Lightest / fastest locally | Kokoro-82M (82M params), Magpie (357M), VibeVoice (0.5B) |
-| Free for commercial use | Kokoro-82M, VibeVoice, CSM-1B, Chatterbox, Magpie, CosyVoice 3 |
+| Free for commercial use | Kokoro-82M, VibeVoice, CSM-1B, Chatterbox, Magpie, CosyVoice 3, Maya1 |
 | **Non-commercial only** | fishspeech S1 mini (CC-BY-NC-SA-4.0) |
 

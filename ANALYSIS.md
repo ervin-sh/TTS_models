@@ -25,7 +25,7 @@ Human conversation has a perceptual threshold around 300ms. Below it, a response
 
 | Tier | Threshold | Models |
 | --- | --- | --- |
-| **Tier 1 — Real-time capable** | < 200ms | CosyVoice 3 (~150ms), Chatterbox (<200ms), PersonaPlex (170ms turn-taking / 240ms interruption) |
+| **Tier 1 — Real-time capable** | < 200ms | Maya1 (sub-100ms, vLLM), CosyVoice 3 (~150ms), Chatterbox (<200ms), PersonaPlex (170ms turn-taking / 240ms interruption) |
 | **Tier 2 — Borderline** | 200–300ms | VibeVoice-Realtime (~300ms) |
 | **Tier 3 — Not real-time** | > 300ms or unspecified | CSM-1B (slow), fishspeech on Mac (very slow), DiVA (not specified), Dia-2B (not specified), Kokoro-82M (fast but unquantified), Magpie (fast but unquantified) |
 
@@ -87,7 +87,7 @@ One of the most fragmented areas across the tested models was emotion control. F
 
 | Paradigm | Models | Mechanism | Best For |
 | --- | --- | --- | --- |
-| **Inline tag injection** | Nova Sonic v2, CosyVoice 3 | Insert `[laugh]`, `[sigh]`, `[excited]` directly in text | LLM-driven pipelines |
+| **Inline tag injection** | Nova Sonic v2, CosyVoice 3, Maya1 | Insert `[laugh]`, `[sigh]`, `[excited]` / `<laugh>`, `<whisper>` directly in text | LLM-driven pipelines |
 | **Parenthetical markers (49 tags)** | fishspeech S1 mini | `(laughing)` `(sobbing)` `(whispering)` `(angry)` `(sad)` `(excited)` `(proud)` `(disgusted)` + 40 more | Scripted, highly-controlled audio production |
 | **Continuous exaggeration slider** | Chatterbox | CFG dial controls emotional intensity, Pace dial controls delivery speed | Character audio design, audiobooks, games |
 | **Fine-grained vocal parameter control** | Ming-Omni | rate, pitch, volume, emotion, dialect as independent knobs | Studio-quality voice design workflows |
@@ -95,7 +95,7 @@ One of the most fragmented areas across the tested models was emotion control. F
 
 ### Analysis
 
-**The inline injection model (Nova Sonic, CosyVoice 3) is the most composable** for LLM pipelines. You can prompt an LLM to output `[laugh] I can't believe that worked` and pass it directly to TTS — the LLM becomes the emotion director. This is how Nova Sonic v2 was designed: the language model decides when to laugh, and the voice model executes it. CosyVoice 3 replicates this pattern in an open model.
+**The inline injection model (Nova Sonic, CosyVoice 3, Maya1) is the most composable** for LLM pipelines. You can prompt an LLM to output `[laugh] I can't believe that worked` and pass it directly to TTS — the LLM becomes the emotion director. This is how Nova Sonic v2 was designed: the language model decides when to laugh, and the voice model executes it. CosyVoice 3 and Maya1 both replicate this pattern in open models. Maya1 adds a second dimension: natural language voice descriptions that let you specify a voice entirely in prose rather than selecting from a catalog.
 
 **fishspeech's 49-tag vocabulary is the richest palette available**, offering tags that go well beyond simple emotion into affect and tone: `(whispering)`, `(panting)`, `(groaning)`, `(crowd laughing)`. In principle this enables nuanced voice performance. In practice, the base voice quality was rated as "sounds funny" in testing — which limits how much the emotional tags help. A well-delivered neutral voice is worth more than 49 tags on a voice that doesn't sound right.
 
@@ -154,7 +154,7 @@ After testing, the gap between open-source TTS and Nova Sonic v2 is narrower tha
 
 ### Naturalness — Gap Narrowing
 
-VibeVoice-Realtime-0.5B — a 0.5B model running on a local Mac — was rated as **"surprisingly natural — almost the same feel as Nova Sonic 2."** Kokoro-82M and Magpie were both rated "very natural — surprising." These are not consolation prizes. For a significant fraction of use cases, the audio quality difference is not perceptible to the average listener.
+VibeVoice-Realtime-0.5B — a 0.5B model running on a local Mac — was rated as **"surprisingly natural — almost the same feel as Nova Sonic 2."** Kokoro-82M and Magpie were both rated "very natural — surprising." Maya1 was rated "very nice — ElevenLabs quality," running via MPS/CPU on Mac. These are not consolation prizes. For a significant fraction of use cases, the audio quality difference is not perceptible to the average listener.
 
 ### Latency — Partial Parity
 
@@ -220,7 +220,7 @@ These are not hypothetical. Each build is based directly on demonstrated capabil
 
 3. **Full-duplex is still the cloud moat.** Interruption handling is the one thing open-source has not solved at scale.
 
-4. **Emotion is a fragmented, unsolved design space.** Five different paradigms exist with no consensus. Inline tag injection is the most composable for LLM pipelines; nobody has solved real-time mid-stream emotion modulation yet.
+4. **Emotion is a fragmented, unsolved design space.** Five different paradigms exist with no consensus. Inline tag injection (Nova Sonic, CosyVoice 3, Maya1) is the most composable for LLM pipelines; nobody has solved real-time mid-stream emotion modulation yet.
 
 5. **Multi-persona is closer than expected.** Dia-2B and CSM-1B both produce convincing multi-speaker audio. Chatterbox and CosyVoice 3 make arbitrary voice personas possible from short clips.
 

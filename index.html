@@ -380,6 +380,83 @@
   .summary-item.highlight { background: var(--blue-light); border-color: #bfdbfe; }
   .summary-item.highlight .crit { color: var(--blue); }
 
+  /* ── Emotion Matrix ── */
+  .emotion-matrix { min-width: 780px; }
+  .emotion-matrix thead th {
+    background: #111;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 13px 12px;
+    text-align: center;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  .emotion-matrix thead th:first-child { text-align: left; }
+  .emotion-matrix tbody tr:nth-child(even) { background: #fafafa; }
+  .emotion-matrix tbody tr:hover { background: var(--blue-light); }
+  .emotion-row-label {
+    font-weight: 600;
+    font-size: 13px;
+    color: #111;
+    padding: 10px 16px;
+    white-space: nowrap;
+    text-transform: capitalize;
+    letter-spacing: 0.01em;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .emotion-cell {
+    text-align: center;
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .emotion-matrix tbody tr:last-child .emotion-row-label,
+  .emotion-matrix tbody tr:last-child .emotion-cell { border-bottom: none; }
+  .em-play-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--blue);
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, transform 0.1s;
+    margin: 0 auto;
+  }
+  .em-play-btn:hover { background: #1648c0; transform: scale(1.08); }
+  .em-play-btn svg { width: 10px; height: 10px; fill: #fff; }
+  .em-time {
+    display: block;
+    font-size: 10px;
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    margin-top: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .em-cell-none {
+    color: #ccc;
+    font-size: 16px;
+    line-height: 1;
+  }
+  .em-model-header { line-height: 1.4; }
+  .em-model-header .em-mech {
+    display: block;
+    font-size: 9.5px;
+    font-weight: 400;
+    color: #aaa;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    margin-top: 3px;
+  }
+
   /* ── Footer ── */
   footer {
     text-align: center;
@@ -420,6 +497,7 @@
       <a href="#details">§3 Details & Notes</a>
       <a href="#training">§4 Training & Metrics</a>
       <a href="#summary">§5 Quick Summary</a>
+      <a href="#emotions">§6 Emotion Expressiveness</a>
     </nav>
   </header>
 
@@ -707,16 +785,8 @@
         <div class="no-audio-label">No sample recorded</div>
       </div>
 
-    </div><!-- /main-cards -->
-
-    <!-- Bonus models -->
-    <div class="subsection-heading">§ 1b — Additional Models <span class="badge badge-bonus" style="font-size:11px;vertical-align:middle;">Tested Separately</span></div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">These models were tested but not part of the original comparison scope. Both are significant — Qwen3-TTS has the fastest published latency (97ms) of any model in this entire set.</p>
-
-    <div class="cards-grid">
-
       <!-- Moshi -->
-      <div class="card bonus" data-model="moshi">
+      <div class="card" data-model="moshi">
         <div class="card-top">
           <div class="card-name"><a href="https://github.com/kyutai-labs/moshi" target="_blank">Moshi (Kyutai)</a></div>
         </div>
@@ -726,7 +796,7 @@
           <span class="badge badge-yes">Full-Duplex</span>
           <span class="badge badge-dashed">CC-BY 4.0</span>
         </div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Inner monologue training · Mimi codec 12.5Hz · English only · 2 fixed voices · 2.1T token pretrain</div>
+        <div class="card-note na">Inner monologue training · Mimi codec 12.5Hz · English only · 2 fixed voices</div>
         <div class="player">
           <button class="play-btn" onclick="togglePlay('moshi')">
             <svg id="icon-moshi" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
@@ -740,7 +810,7 @@
       </div>
 
       <!-- Qwen3-TTS -->
-      <div class="card bonus" data-model="qwen">
+      <div class="card" data-model="qwen">
         <div class="card-top">
           <div class="card-name"><a href="https://github.com/QwenLM/Qwen3-TTS" target="_blank">Qwen3-TTS (Alibaba)</a></div>
         </div>
@@ -750,7 +820,7 @@
           <span class="badge badge-yes">Voice Clone</span>
           <span class="badge badge-yes">Emotions</span>
         </div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Dual-Track streaming · 10 languages + 10 Chinese dialects · 3-sec clone · Voice Design mode · Apache 2.0</div>
+        <div class="card-note good">Dual-Track streaming · 10 languages + 10 Chinese dialects · 3-sec clone · Voice Design</div>
         <div class="player">
           <button class="play-btn" onclick="togglePlay('qwen')">
             <svg id="icon-qwen" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
@@ -763,7 +833,33 @@
         <audio id="audio-qwen" src="recordings/qwen.wav" preload="metadata"></audio>
       </div>
 
-    </div><!-- /bonus cards -->
+      <!-- Maya1 -->
+      <div class="card" data-model="maya">
+        <div class="card-top">
+          <div class="card-name"><a href="https://huggingface.co/maya-research/maya1" target="_blank">Maya1 (Maya Research)</a></div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-blue">3B</span>
+          <span class="badge badge-yes">Sub-100ms*</span>
+          <span class="badge badge-yes">Streaming</span>
+          <span class="badge badge-yes">Emotions</span>
+          <span class="badge badge-yes">Voice Design</span>
+        </div>
+        <div class="card-note good">Very nice — ElevenLabs quality. Runs on Mac (MPS/CPU)</div>
+        <div class="player">
+          <button class="play-btn" onclick="togglePlay('maya')">
+            <svg id="icon-maya" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+          </button>
+          <div class="player-controls">
+            <input type="range" class="progress-bar" id="prog-maya" value="0" min="0" max="100" step="0.1" oninput="seek('maya',this.value)">
+            <div class="time-display" id="time-maya">0:00 / 0:00</div>
+          </div>
+        </div>
+        <audio id="audio-maya" src="recordings/maya.wav" preload="metadata"></audio>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px;">* latency with vLLM</div>
+      </div>
+
+    </div><!-- /main-cards -->
   </section>
 
   <!-- ─── § 2: TABLE A ─── -->
@@ -928,6 +1024,17 @@
             <td><span class="badge badge-no">No</span></td>
             <td>Apache 2.0</td>
           </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/maya-research/maya1" target="_blank">Maya1</a> <button class="mini-play" onclick="togglePlay('maya')">▶</button></td>
+            <td>3B</td>
+            <td>Sub-100ms (vLLM)</td>
+            <td><span class="badge badge-yes">Streaming</span></td>
+            <td><span class="badge badge-yes">Yes (MPS/CPU)</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-yes">20+ inline tags</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td>Apache 2.0</td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -1025,6 +1132,12 @@
             <td>English primary</td>
             <td>Context-aware generation; multi-speaker dialogue; CUDA graph compilation; native Transformers integration</td>
             <td class="notes-cell">Sounds great</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/maya-research/maya1" target="_blank">Maya1</a> <button class="mini-play" onclick="togglePlay('maya')">▶</button></td>
+            <td>English (multi-accent)</td>
+            <td>Natural language zero-shot voice descriptions; 20+ emotion tags <code>&lt;laugh&gt;</code> <code>&lt;whisper&gt;</code> <code>&lt;cry&gt;</code>; Llama-style 3B + SNAC codec 24kHz; vLLM production infra; prefix caching for repeated voices; runs on Mac via MPS/CPU</td>
+            <td class="notes-cell">Very nice — ElevenLabs quality</td>
           </tr>
         </tbody>
       </table>
@@ -1138,6 +1251,13 @@
             <td><span class="black-square">■</span></td>
             <td><span class="black-square">■</span></td>
           </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/maya-research/maya1" target="_blank">Maya1</a></td>
+            <td>Internet-scale English speech + proprietary curated studio recordings (human-verified, MFA-aligned, MinHash-LSH deduped, Chromaprint audio deduped)</td>
+            <td><span class="black-square">■</span></td>
+            <td><span class="black-square">■</span></td>
+            <td><span class="black-square">■</span></td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -1149,7 +1269,7 @@
     <div class="summary-grid">
       <div class="summary-item highlight">
         <div class="crit">Lowest latency</div>
-        <div class="best">Qwen3-TTS (97ms) · CosyVoice 3 (~150ms) · Chatterbox (&lt;200ms)</div>
+        <div class="best">Maya1 (sub-100ms, vLLM) · Qwen3-TTS (97ms) · CosyVoice 3 (~150ms) · Chatterbox (&lt;200ms)</div>
       </div>
       <div class="summary-item highlight">
         <div class="crit">True full-duplex</div>
@@ -1157,7 +1277,7 @@
       </div>
       <div class="summary-item">
         <div class="crit">Best naturalness</div>
-        <div class="best">Nova Sonic v2 · VibeVoice · Kokoro-82M · Magpie · CSM-1B</div>
+        <div class="best">Nova Sonic v2 · Maya1 · VibeVoice · Kokoro-82M · Magpie · CSM-1B</div>
       </div>
       <div class="summary-item">
         <div class="crit">Most languages</div>
@@ -1165,7 +1285,7 @@
       </div>
       <div class="summary-item">
         <div class="crit">Richest emotions</div>
-        <div class="best">fishspeech (49 tags) · Ming (fine-grained) · Chatterbox (slider)</div>
+        <div class="best">fishspeech (49 tags) · Ming (fine-grained) · Maya1 (20+ inline tags) · Chatterbox (slider)</div>
       </div>
       <div class="summary-item">
         <div class="crit">Voice cloning</div>
@@ -1181,7 +1301,7 @@
       </div>
       <div class="summary-item">
         <div class="crit">Free commercial use</div>
-        <div class="best">Kokoro · VibeVoice · CSM-1B · Chatterbox · Magpie · CosyVoice 3 · Qwen3-TTS</div>
+        <div class="best">Kokoro · VibeVoice · CSM-1B · Chatterbox · Magpie · CosyVoice 3 · Qwen3-TTS · Maya1</div>
       </div>
       <div class="summary-item highlight" style="border-color:#fca5a5;background:#fef2f2;">
         <div class="crit" style="color:#b91c1c;">Non-commercial only</div>
@@ -1198,6 +1318,385 @@
     </div>
   </section>
 
+  <!-- ─── § 6: EMOTION EXPRESSIVENESS ─── -->
+  <section class="section" id="emotions">
+    <h2 class="section-heading"><span class="num">§ 6</span> Emotion Expressiveness</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:6px;">Five models support explicit emotion control — each using a different paradigm. The same 9 emotion categories were tested across all five. Click ▶ to play any clip; only one audio plays at a time across the entire page.</p>
+    <p style="font-size:12.5px;color:var(--muted);margin-bottom:22px;">Input sentence: <em>"I can't believe you actually did that — I've been waiting for this moment for years."</em></p>
+
+    <div class="table-wrap">
+      <table class="emotion-matrix">
+        <thead>
+          <tr>
+            <th style="text-align:left;">Emotion</th>
+            <th><div class="em-model-header">AWS Nova Sonic v2<span class="em-mech">Inline tags [laugh]</span></div></th>
+            <th><div class="em-model-header">Qwen3-TTS<span class="em-mech">Built-in</span></div></th>
+            <th><div class="em-model-header">Chatterbox<span class="em-mech">Exaggeration slider</span></div></th>
+            <th><div class="em-model-header">fishspeech S1 mini<span class="em-mech">Parenthetical (angry)</span></div></th>
+            <th><div class="em-model-header">Ming-Omni-TTS<span class="em-mech">emotion= param</span></div></th>
+            <th><div class="em-model-header">Maya1<span class="em-mech">Inline tags &lt;laugh&gt;</span></div></th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- Angry -->
+          <tr>
+            <td class="emotion-row-label">Angry</td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('novasonic-angry')"><svg id="icon-e-novasonic-angry" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-novasonic-angry">0:00</span>
+              <audio id="audio-e-novasonic-angry" src="recordings/emotions/novasonic2/aws_novasonic2_angry.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('qwen3-angry')"><svg id="icon-e-qwen3-angry" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-qwen3-angry">0:00</span>
+              <audio id="audio-e-qwen3-angry" src="recordings/emotions/Qwen3/emotion_angry.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('chatterbox-angry')"><svg id="icon-e-chatterbox-angry" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-chatterbox-angry">0:00</span>
+              <audio id="audio-e-chatterbox-angry" src="recordings/emotions/chatterbox/07_angry_clean_e100.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('fishspeech-angry')"><svg id="icon-e-fishspeech-angry" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-fishspeech-angry">0:00</span>
+              <audio id="audio-e-fishspeech-angry" src="recordings/emotions/fishspeech/angry.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('mingomni-angry')"><svg id="icon-e-mingomni-angry" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-mingomni-angry">0:00</span>
+              <audio id="audio-e-mingomni-angry" src="recordings/emotions/mingomni/emotion_angry.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('maya-angry')"><svg id="icon-e-maya-angry" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-maya-angry">0:00</span>
+              <audio id="audio-e-maya-angry" src="recordings/emotions/maya/07_angry.wav" preload="metadata"></audio>
+            </td>
+          </tr>
+
+          <!-- Breath -->
+          <tr>
+            <td class="emotion-row-label">Breath</td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('novasonic-breath')"><svg id="icon-e-novasonic-breath" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-novasonic-breath">0:00</span>
+              <audio id="audio-e-novasonic-breath" src="recordings/emotions/novasonic2/aws_novasonic2_breath.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('qwen3-breath')"><svg id="icon-e-qwen3-breath" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-qwen3-breath">0:00</span>
+              <audio id="audio-e-qwen3-breath" src="recordings/emotions/Qwen3/emotion_breath.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('chatterbox-breath')"><svg id="icon-e-chatterbox-breath" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-chatterbox-breath">0:00</span>
+              <audio id="audio-e-chatterbox-breath" src="recordings/emotions/chatterbox/03_breath_clean_e050.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell"><span class="em-cell-none">—</span></td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('mingomni-breath')"><svg id="icon-e-mingomni-breath" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-mingomni-breath">0:00</span>
+              <audio id="audio-e-mingomni-breath" src="recordings/emotions/mingomni/emotion_breath.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell"><span class="em-cell-none">—</span></td>
+          </tr>
+
+          <!-- Excited -->
+          <tr>
+            <td class="emotion-row-label">Excited</td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('novasonic-excited')"><svg id="icon-e-novasonic-excited" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-novasonic-excited">0:00</span>
+              <audio id="audio-e-novasonic-excited" src="recordings/emotions/novasonic2/aws_novasonic2_excited.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('qwen3-excited')"><svg id="icon-e-qwen3-excited" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-qwen3-excited">0:00</span>
+              <audio id="audio-e-qwen3-excited" src="recordings/emotions/Qwen3/emotion_excited.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('chatterbox-excited')"><svg id="icon-e-chatterbox-excited" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-chatterbox-excited">0:00</span>
+              <audio id="audio-e-chatterbox-excited" src="recordings/emotions/chatterbox/05_excited_clean_e100.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('fishspeech-excited')"><svg id="icon-e-fishspeech-excited" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-fishspeech-excited">0:00</span>
+              <audio id="audio-e-fishspeech-excited" src="recordings/emotions/fishspeech/excited.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('mingomni-excited')"><svg id="icon-e-mingomni-excited" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-mingomni-excited">0:00</span>
+              <audio id="audio-e-mingomni-excited" src="recordings/emotions/mingomni/emotion_excited.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('maya-excited')"><svg id="icon-e-maya-excited" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-maya-excited">0:00</span>
+              <audio id="audio-e-maya-excited" src="recordings/emotions/maya/05_excited.wav" preload="metadata"></audio>
+            </td>
+          </tr>
+
+          <!-- Fearful -->
+          <tr>
+            <td class="emotion-row-label">Fearful</td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('novasonic-fearful')"><svg id="icon-e-novasonic-fearful" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-novasonic-fearful">0:00</span>
+              <audio id="audio-e-novasonic-fearful" src="recordings/emotions/novasonic2/aws_novasonic2_fearful.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('qwen3-fearful')"><svg id="icon-e-qwen3-fearful" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-qwen3-fearful">0:00</span>
+              <audio id="audio-e-qwen3-fearful" src="recordings/emotions/Qwen3/emotion_fearful.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('chatterbox-fearful')"><svg id="icon-e-chatterbox-fearful" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-chatterbox-fearful">0:00</span>
+              <audio id="audio-e-chatterbox-fearful" src="recordings/emotions/chatterbox/08_fearful_clean_e050.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('fishspeech-fearful')"><svg id="icon-e-fishspeech-fearful" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-fishspeech-fearful">0:00</span>
+              <audio id="audio-e-fishspeech-fearful" src="recordings/emotions/fishspeech/scared.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('mingomni-fearful')"><svg id="icon-e-mingomni-fearful" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-mingomni-fearful">0:00</span>
+              <audio id="audio-e-mingomni-fearful" src="recordings/emotions/mingomni/emotion_fearful.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('maya-fearful')"><svg id="icon-e-maya-fearful" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-maya-fearful">0:00</span>
+              <audio id="audio-e-maya-fearful" src="recordings/emotions/maya/08_fearful.wav" preload="metadata"></audio>
+            </td>
+          </tr>
+
+          <!-- Laugh -->
+          <tr>
+            <td class="emotion-row-label">Laugh</td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('novasonic-laugh')"><svg id="icon-e-novasonic-laugh" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-novasonic-laugh">0:00</span>
+              <audio id="audio-e-novasonic-laugh" src="recordings/emotions/novasonic2/aws_novasonic2_laugh.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('qwen3-laugh')"><svg id="icon-e-qwen3-laugh" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-qwen3-laugh">0:00</span>
+              <audio id="audio-e-qwen3-laugh" src="recordings/emotions/Qwen3/emotion_laugh.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('chatterbox-laugh')"><svg id="icon-e-chatterbox-laugh" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-chatterbox-laugh">0:00</span>
+              <audio id="audio-e-chatterbox-laugh" src="recordings/emotions/chatterbox/01_laugh_clean_e100.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('fishspeech-laugh')"><svg id="icon-e-fishspeech-laugh" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-fishspeech-laugh">0:00</span>
+              <audio id="audio-e-fishspeech-laugh" src="recordings/emotions/fishspeech/laughing.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('mingomni-laugh')"><svg id="icon-e-mingomni-laugh" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-mingomni-laugh">0:00</span>
+              <audio id="audio-e-mingomni-laugh" src="recordings/emotions/mingomni/emotion_laugh.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('maya-laugh')"><svg id="icon-e-maya-laugh" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-maya-laugh">0:00</span>
+              <audio id="audio-e-maya-laugh" src="recordings/emotions/maya/01_laugh.wav" preload="metadata"></audio>
+            </td>
+          </tr>
+
+          <!-- Sad -->
+          <tr>
+            <td class="emotion-row-label">Sad</td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('novasonic-sad')"><svg id="icon-e-novasonic-sad" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-novasonic-sad">0:00</span>
+              <audio id="audio-e-novasonic-sad" src="recordings/emotions/novasonic2/aws_novasonic2_sad.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('qwen3-sad')"><svg id="icon-e-qwen3-sad" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-qwen3-sad">0:00</span>
+              <audio id="audio-e-qwen3-sad" src="recordings/emotions/Qwen3/emotion_sad.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('chatterbox-sad')"><svg id="icon-e-chatterbox-sad" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-chatterbox-sad">0:00</span>
+              <audio id="audio-e-chatterbox-sad" src="recordings/emotions/chatterbox/06_sad_clean_e025.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('fishspeech-sad')"><svg id="icon-e-fishspeech-sad" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-fishspeech-sad">0:00</span>
+              <audio id="audio-e-fishspeech-sad" src="recordings/emotions/fishspeech/sad.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('mingomni-sad')"><svg id="icon-e-mingomni-sad" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-mingomni-sad">0:00</span>
+              <audio id="audio-e-mingomni-sad" src="recordings/emotions/mingomni/emotion_sad.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('maya-sad')"><svg id="icon-e-maya-sad" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-maya-sad">0:00</span>
+              <audio id="audio-e-maya-sad" src="recordings/emotions/maya/06_sad.wav" preload="metadata"></audio>
+            </td>
+          </tr>
+
+          <!-- Sigh -->
+          <tr>
+            <td class="emotion-row-label">Sigh</td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('novasonic-sigh')"><svg id="icon-e-novasonic-sigh" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-novasonic-sigh">0:00</span>
+              <audio id="audio-e-novasonic-sigh" src="recordings/emotions/novasonic2/aws_novasonic2_sigh.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('qwen3-sigh')"><svg id="icon-e-qwen3-sigh" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-qwen3-sigh">0:00</span>
+              <audio id="audio-e-qwen3-sigh" src="recordings/emotions/Qwen3/emotion_sigh.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('chatterbox-sigh')"><svg id="icon-e-chatterbox-sigh" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-chatterbox-sigh">0:00</span>
+              <audio id="audio-e-chatterbox-sigh" src="recordings/emotions/chatterbox/02_sigh_clean_e075.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('fishspeech-sigh')"><svg id="icon-e-fishspeech-sigh" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-fishspeech-sigh">0:00</span>
+              <audio id="audio-e-fishspeech-sigh" src="recordings/emotions/fishspeech/sighing.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('mingomni-sigh')"><svg id="icon-e-mingomni-sigh" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-mingomni-sigh">0:00</span>
+              <audio id="audio-e-mingomni-sigh" src="recordings/emotions/mingomni/emotion_sigh.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('maya-sigh')"><svg id="icon-e-maya-sigh" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-maya-sigh">0:00</span>
+              <audio id="audio-e-maya-sigh" src="recordings/emotions/maya/02_sigh.wav" preload="metadata"></audio>
+            </td>
+          </tr>
+
+          <!-- Surprised -->
+          <tr>
+            <td class="emotion-row-label">Surprised</td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('novasonic-surprised')"><svg id="icon-e-novasonic-surprised" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-novasonic-surprised">0:00</span>
+              <audio id="audio-e-novasonic-surprised" src="recordings/emotions/novasonic2/aws_novasonic2_surprised.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('qwen3-surprised')"><svg id="icon-e-qwen3-surprised" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-qwen3-surprised">0:00</span>
+              <audio id="audio-e-qwen3-surprised" src="recordings/emotions/Qwen3/emotion_surprised.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('chatterbox-surprised')"><svg id="icon-e-chatterbox-surprised" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-chatterbox-surprised">0:00</span>
+              <audio id="audio-e-chatterbox-surprised" src="recordings/emotions/chatterbox/09_surprised_clean_e100.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('fishspeech-surprised')"><svg id="icon-e-fishspeech-surprised" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-fishspeech-surprised">0:00</span>
+              <audio id="audio-e-fishspeech-surprised" src="recordings/emotions/fishspeech/surprised.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('mingomni-surprised')"><svg id="icon-e-mingomni-surprised" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-mingomni-surprised">0:00</span>
+              <audio id="audio-e-mingomni-surprised" src="recordings/emotions/mingomni/emotion_surprised.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('maya-surprised')"><svg id="icon-e-maya-surprised" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-maya-surprised">0:00</span>
+              <audio id="audio-e-maya-surprised" src="recordings/emotions/maya/09_surprised.wav" preload="metadata"></audio>
+            </td>
+          </tr>
+
+          <!-- Whisper -->
+          <tr>
+            <td class="emotion-row-label">Whisper</td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('novasonic-whisper')"><svg id="icon-e-novasonic-whisper" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-novasonic-whisper">0:00</span>
+              <audio id="audio-e-novasonic-whisper" src="recordings/emotions/novasonic2/aws_novasonic2_whisper.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('qwen3-whisper')"><svg id="icon-e-qwen3-whisper" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-qwen3-whisper">0:00</span>
+              <audio id="audio-e-qwen3-whisper" src="recordings/emotions/Qwen3/emotion_whisper.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('chatterbox-whisper')"><svg id="icon-e-chatterbox-whisper" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-chatterbox-whisper">0:00</span>
+              <audio id="audio-e-chatterbox-whisper" src="recordings/emotions/chatterbox/04_whisper_clean_e025.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('fishspeech-whisper')"><svg id="icon-e-fishspeech-whisper" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-fishspeech-whisper">0:00</span>
+              <audio id="audio-e-fishspeech-whisper" src="recordings/emotions/fishspeech/whispering.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('mingomni-whisper')"><svg id="icon-e-mingomni-whisper" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-mingomni-whisper">0:00</span>
+              <audio id="audio-e-mingomni-whisper" src="recordings/emotions/mingomni/emotion_whisper.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('maya-whisper')"><svg id="icon-e-maya-whisper" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-maya-whisper">0:00</span>
+              <audio id="audio-e-maya-whisper" src="recordings/emotions/maya/04_whisper.wav" preload="metadata"></audio>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <div class="subsection-heading">Emotion Control Mechanisms</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Paradigm</th>
+            <th>How it works</th>
+            <th>License</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="model-cell"><a href="https://aws.amazon.com/ai/generative-ai/nova/sonic/" target="_blank">AWS Nova Sonic v2</a></td>
+            <td>Inline tag injection</td>
+            <td><code>[laugh]</code>, <code>[sigh]</code>, <code>[excited]</code> inserted directly in text</td>
+            <td>Proprietary</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://github.com/QwenLM/Qwen3-TTS" target="_blank">Qwen3-TTS</a></td>
+            <td>Built-in</td>
+            <td>Emotion is a first-class property of the voice; no explicit tagging required</td>
+            <td>Apache 2.0</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/ResembleAI/chatterbox" target="_blank">Chatterbox</a></td>
+            <td>Intensity slider</td>
+            <td>CFG exaggeration dial (0.0–1.0+) amplifies emotional content the model infers from text. No typed emotion — <em>how much</em>, not <em>which</em></td>
+            <td>MIT</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/fishaudio/s1-mini" target="_blank">fishspeech S1 mini</a></td>
+            <td>Parenthetical markers</td>
+            <td>49 tags inserted as parenthetical annotations: <code>(laughing)</code> <code>(angry)</code> <code>(whispering)</code> <code>(excited)</code> …</td>
+            <td><span class="badge badge-warn" style="font-size:11px;">CC-BY-NC-SA-4.0</span></td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/inclusionAI/Ming-omni-tts-0.5B" target="_blank">Ming-Omni-TTS-0.5B</a></td>
+            <td>Fine-grained parameter control</td>
+            <td>Independent axes: <code>emotion=</code>, <code>rate=</code>, <code>pitch=</code>, <code>volume=</code>, <code>dialect=</code> — each set separately. Emotion accuracy 76.7% on CV3-Eval</td>
+            <td>Apache 2.0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
   <footer>
     Open-Source TTS Benchmark · Personal Experiments · March 2026
   </footer>
@@ -1210,6 +1709,7 @@
 
 <script>
   let currentModel = null;
+  let currentEmotion = null;
 
   const PAUSE_ICON = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
   const PLAY_ICON  = '<polygon points="5,3 19,12 5,21"/>';
@@ -1221,9 +1721,21 @@
     return `${m}:${sec}`;
   }
 
+  function stopCurrentEmotion() {
+    if (currentEmotion) {
+      const prev = document.getElementById('audio-e-' + currentEmotion);
+      if (prev) prev.pause();
+      const icon = document.getElementById('icon-e-' + currentEmotion);
+      if (icon) icon.innerHTML = PLAY_ICON;
+      currentEmotion = null;
+    }
+  }
+
   function togglePlay(id) {
     const audio = document.getElementById('audio-' + id);
     if (!audio) return;
+
+    stopCurrentEmotion();
 
     if (currentModel && currentModel !== id) {
       const prev = document.getElementById('audio-' + currentModel);
@@ -1245,6 +1757,40 @@
       setIcon(id, false);
       const card = document.querySelector(`[data-model="${id}"]`);
       if (card) card.classList.remove('playing');
+    }
+  }
+
+  function toggleEmotion(id) {
+    const audio = document.getElementById('audio-e-' + id);
+    if (!audio) return;
+
+    // Stop main player if running
+    if (currentModel) {
+      const prev = document.getElementById('audio-' + currentModel);
+      if (prev) prev.pause();
+      setIcon(currentModel, false);
+      const prevCard = document.querySelector(`[data-model="${currentModel}"]`);
+      if (prevCard) prevCard.classList.remove('playing');
+      currentModel = null;
+    }
+
+    // Stop previous emotion clip if different
+    if (currentEmotion && currentEmotion !== id) {
+      const prev = document.getElementById('audio-e-' + currentEmotion);
+      if (prev) prev.pause();
+      const icon = document.getElementById('icon-e-' + currentEmotion);
+      if (icon) icon.innerHTML = PLAY_ICON;
+    }
+
+    const icon = document.getElementById('icon-e-' + id);
+    if (audio.paused) {
+      audio.play();
+      currentEmotion = id;
+      if (icon) icon.innerHTML = PAUSE_ICON;
+    } else {
+      audio.pause();
+      currentEmotion = null;
+      if (icon) icon.innerHTML = PLAY_ICON;
     }
   }
 
@@ -1287,8 +1833,46 @@
   }
 
   const models = ['novasonic','vibevoice','chatterbox','csm','dia2','diva',
-                  'fishspeech','kokoro','magpie','mingomni','moshi','qwen'];
+                  'fishspeech','kokoro','magpie','mingomni','moshi','qwen','maya'];
   models.forEach(bindAudio);
+
+  function bindEmotion(id) {
+    const audio = document.getElementById('audio-e-' + id);
+    const time  = document.getElementById('time-e-' + id);
+    if (!audio || !time) return;
+
+    audio.addEventListener('timeupdate', () => {
+      if (audio.duration) {
+        time.textContent = fmt(audio.currentTime);
+      }
+    });
+
+    audio.addEventListener('ended', () => {
+      const icon = document.getElementById('icon-e-' + id);
+      if (icon) icon.innerHTML = PLAY_ICON;
+      currentEmotion = null;
+    });
+
+    audio.addEventListener('loadedmetadata', () => {
+      time.textContent = '0:00';
+    });
+  }
+
+  const emotionIds = [
+    'novasonic-angry','novasonic-breath','novasonic-excited','novasonic-fearful',
+    'novasonic-laugh','novasonic-sad','novasonic-sigh','novasonic-surprised','novasonic-whisper',
+    'qwen3-angry','qwen3-breath','qwen3-excited','qwen3-fearful',
+    'qwen3-laugh','qwen3-sad','qwen3-sigh','qwen3-surprised','qwen3-whisper',
+    'chatterbox-angry','chatterbox-breath','chatterbox-excited','chatterbox-fearful',
+    'chatterbox-laugh','chatterbox-sad','chatterbox-sigh','chatterbox-surprised','chatterbox-whisper',
+    'fishspeech-angry','fishspeech-excited','fishspeech-fearful',
+    'fishspeech-laugh','fishspeech-sad','fishspeech-sigh','fishspeech-surprised','fishspeech-whisper',
+    'mingomni-angry','mingomni-breath','mingomni-excited','mingomni-fearful',
+    'mingomni-laugh','mingomni-sad','mingomni-sigh','mingomni-surprised','mingomni-whisper',
+    'maya-angry','maya-excited','maya-fearful',
+    'maya-laugh','maya-sad','maya-sigh','maya-surprised','maya-whisper'
+  ];
+  emotionIds.forEach(bindEmotion);
 </script>
 
 </body>
