@@ -82,7 +82,7 @@ The initial experiments established that multi-speaker audio is possible with op
 
 ## 2. Emotion Tagging & Affect Control
 
-Five different paradigms exist for emotion control across the tested models. None of them have been directly compared on the same input. That's the experiment.
+Six different paradigms exist for emotion control across the tested models. None of them have been directly compared on the same input. That's the experiment.
 
 ---
 
@@ -97,7 +97,8 @@ Five different paradigms exist for emotion control across the tested models. Non
   - fishspeech: `(excited) I can't believe you actually did that...`
   - Chatterbox: exaggeration slider at 0.7, pace normal
   - Ming-Omni: emotion=excited, rate=1.1, pitch=+2
-- Blind rank all 5 on expressiveness and naturalness
+  - Voxtral-4B-TTS: voice preset `cheerful_female`, no tag in text
+- Blind rank all 6 on expressiveness and naturalness
 
 **Measure:** Ranked preference scores; which system "sells" the emotion most convincingly
 

@@ -1,6 +1,6 @@
 # Emotion Expressiveness — Models, Mechanisms & Experiments
 
-A focused reference for the subset of tested models that support emotional expressiveness in generated speech. Drawn from the broader 13-model comparison against AWS Nova Sonic v2.
+A focused reference for the subset of tested models that support emotional expressiveness in generated speech. Drawn from the broader 14-model comparison against AWS Nova Sonic v2.
 
 ---
 
@@ -18,6 +18,7 @@ A focused reference for the subset of tested models that support emotional expre
 | [Qwen3-TTS-1.7-CustomVoice](https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice) | Built in | Built in | Apache 2.0 |
 | [VibeVoice-1.5B](https://huggingface.co/microsoft/VibeVoice-1.5B) | Built in Context-Aware Expression and Spontaneous Emotion| Built in | Apache 2.0 |
 | [Maya1](https://huggingface.co/maya-research/maya1) | Inline tag injection | `<laugh>`, `<whisper>`, `<cry>`, `<sigh>`, `<gasp>`, `<giggle>` + 14 more inserted in text | Apache 2.0 |
+| [Voxtral-4B-TTS-2603](https://huggingface.co/mistralai/Voxtral-4B-TTS-2603) | Voice style presets | 20 named voices (e.g. `cheerful_female`, `casual_male`, `neutral_male`) steer emotional tone; context-driven generation handles neutral, happy, and sarcastic tones | CC BY-NC 4.0 (non-commercial only) |
 
 
 ---
@@ -87,6 +88,18 @@ A focused reference for the subset of tested models that support emotional expre
 
 ---
 
+---
+
+#### Voxtral-4B-TTS-2603 — Voice Style Preset Steering
+- **Paradigm:** Voice style presets
+- **How it works:** Emotion is encoded in the choice of voice persona, not in text markup. 20 named presets select a speaker character whose affective style shapes the output. The model also performs context-driven emotion generation for neutral, happy, and sarcastic tones without explicit selection.
+- **Preset examples:** `cheerful_female`, `casual_male`, `neutral_male`, `casual_female`
+- **Size:** 4B (3.4B decoder + 390M acoustic + 300M codec) | **Latency:** 70ms (single concurrency) | **License:** CC BY-NC 4.0 (non-commercial only)
+- **Personal rating:** Not yet personally assessed
+- **Notes:** Architecture combines a Ministral-3B backbone, a flow-matching acoustic transformer, and a neural audio codec. Voice cloning from 3-sec reference clips is supported. Output at 24kHz. Recommended via vLLM. Requires ≥16GB VRAM on a single GPU — not Mac-compatible.
+
+---
+
 ### Not Included: Kimi-Audio
 Kimi-Audio supports **Speech Emotion Recognition (SER)** — it detects and classifies emotion in *input* audio, it does not generate expressive speech. It is a pipeline complement (emotion detector → pass label to TTS), not a generation model. See [Section 3.3 in FUTURE.md](FUTURE.md) for a pipeline experiment using Kimi-Audio SER + CosyVoice 3 TTS.
 
@@ -110,8 +123,9 @@ Kimi-Audio supports **Speech Emotion Recognition (SER)** — it detects and clas
 | fishspeech S1 mini | `(excited) I can't believe you actually did that — I've been waiting for this moment for years.` |
 | Chatterbox | Exaggeration: `0.7`, Pace: normal, no tag in text |
 | Ming-Omni | `emotion=excited`, `rate=1.1`, `pitch=+1` |
+| Voxtral-4B-TTS | Voice preset: `cheerful_female`, no tag in text |
 
-**Measure:** Blind rank all 5 outputs on (a) expressiveness 1–5, (b) naturalness 1–5
+**Measure:** Blind rank all 7 outputs on (a) expressiveness 1–5, (b) naturalness 1–5
 **What you'd learn:** Whether the control paradigm is the variable that matters, or whether the base voice quality is the real differentiator regardless of mechanism.
 
 ---

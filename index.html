@@ -504,7 +504,7 @@
   <!-- ─── ABSTRACT ─── -->
   <div class="abstract">
     <h3>Abstract</h3>
-    <p>Thirteen open-source text-to-speech models were evaluated against AWS Nova Sonic v2 as a reference for production-grade real-time voice AI. Testing was conducted locally on a Mac where possible, with the same input text passed to each model. Quality was assessed across naturalness, latency, local viability, voice cloning, emotion control, and licensing.</p>
+    <p>Fourteen open-source text-to-speech models were evaluated against AWS Nova Sonic v2 as a reference for production-grade real-time voice AI. Testing was conducted locally on a Mac where possible, with the same input text passed to each model. Quality was assessed across naturalness, latency, local viability, voice cloning, emotion control, and licensing.</p>
     <p>The most striking finding: <strong>Kokoro-82M (82M params, &lt;few hundred hours of training data)</strong> was rated "very natural — surprising" — outperforming fishspeech which trained on 2M+ hours and 0.5B parameters. Architecture and data curation consistently dominated raw scale. <strong>VibeVoice-Realtime-0.5B</strong> running locally at ~300ms was rated "almost the same feel as Nova Sonic 2." The cloud gap is closing.</p>
   </div>
 
@@ -859,6 +859,31 @@
         <div style="font-size:11px;color:var(--muted);margin-top:6px;">* latency with vLLM</div>
       </div>
 
+      <!-- Voxtral -->
+      <div class="card" data-model="voxtral">
+        <div class="card-top">
+          <div class="card-name"><a href="https://huggingface.co/mistralai/Voxtral-4B-TTS-2603" target="_blank">Voxtral-4B-TTS (Mistral AI)</a></div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-blue">4B</span>
+          <span class="badge badge-yes">70ms</span>
+          <span class="badge badge-yes">Streaming</span>
+          <span class="badge badge-yes">Voice Clone</span>
+          <span class="badge badge-yes">Emotions</span>
+        </div>
+        <div class="card-note na">Not yet personally assessed</div>
+        <div class="player">
+          <button class="play-btn" onclick="togglePlay('voxtral')">
+            <svg id="icon-voxtral" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+          </button>
+          <div class="player-controls">
+            <input type="range" class="progress-bar" id="prog-voxtral" value="0" min="0" max="100" step="0.1" oninput="seek('voxtral',this.value)">
+            <div class="time-display" id="time-voxtral">0:00 / 0:00</div>
+          </div>
+        </div>
+        <audio id="audio-voxtral" src="recordings/voxtral.wav" preload="metadata"></audio>
+      </div>
+
     </div><!-- /main-cards -->
   </section>
 
@@ -1035,6 +1060,17 @@
             <td><span class="badge badge-no">No</span></td>
             <td>Apache 2.0</td>
           </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/mistralai/Voxtral-4B-TTS-2603" target="_blank">Voxtral-4B-TTS</a> <button class="mini-play" onclick="togglePlay('voxtral')">▶</button></td>
+            <td>4B</td>
+            <td>70ms (single)</td>
+            <td><span class="badge badge-yes">Streaming</span></td>
+            <td><span class="badge badge-cloud">Linux+GPU</span></td>
+            <td><span class="badge badge-yes">Yes (3-sec ref)</span></td>
+            <td><span class="badge badge-yes">Contextual</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-warn">CC BY-NC 4.0</span></td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -1138,6 +1174,12 @@
             <td>English (multi-accent)</td>
             <td>Natural language zero-shot voice descriptions; 20+ emotion tags <code>&lt;laugh&gt;</code> <code>&lt;whisper&gt;</code> <code>&lt;cry&gt;</code>; Llama-style 3B + SNAC codec 24kHz; vLLM production infra; prefix caching for repeated voices; runs on Mac via MPS/CPU</td>
             <td class="notes-cell">Very nice — ElevenLabs quality</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/mistralai/Voxtral-4B-TTS-2603" target="_blank">Voxtral-4B-TTS</a> <button class="mini-play" onclick="togglePlay('voxtral')">▶</button></td>
+            <td>9 languages (EN FR DE ES IT PT NL AR HI)</td>
+            <td>3.4B Ministral backbone + 390M flow-matching acoustic + 300M neural codec; 20 preset voices; 3-sec zero-shot voice clone; emotion-steering via voice style; 24kHz; vLLM recommended; up to 2 min native generation</td>
+            <td class="notes-cell">Not yet personally assessed</td>
           </tr>
         </tbody>
       </table>
@@ -1258,6 +1300,13 @@
             <td><span class="black-square">■</span></td>
             <td><span class="black-square">■</span></td>
           </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/mistralai/Voxtral-4B-TTS-2603" target="_blank">Voxtral-4B-TTS</a></td>
+            <td><span class="black-square">■</span></td>
+            <td><strong>4B</strong> (3.4B + 390M + 300M)</td>
+            <td><span class="black-square">■</span></td>
+            <td class="metric">Latency: <strong>70ms</strong> (1 concurrent) · <strong>331ms</strong> (16 concurrent) · RTF: <strong>0.103</strong> · Throughput: <strong>119–1430 chars/s/GPU</strong></td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -1289,7 +1338,7 @@
       </div>
       <div class="summary-item">
         <div class="crit">Voice cloning</div>
-        <div class="best">Chatterbox · CosyVoice 3 · Ming · Qwen3-TTS (3-sec) · PersonaPlex</div>
+        <div class="best">Chatterbox · CosyVoice 3 · Ming · Qwen3-TTS (3-sec) · Voxtral (3-sec) · PersonaPlex</div>
       </div>
       <div class="summary-item">
         <div class="crit">Watermarking</div>
@@ -1305,7 +1354,7 @@
       </div>
       <div class="summary-item highlight" style="border-color:#fca5a5;background:#fef2f2;">
         <div class="crit" style="color:#b91c1c;">Non-commercial only</div>
-        <div class="best" style="color:#7f1d1d;">fishspeech S1 mini (CC-BY-NC-SA-4.0)</div>
+        <div class="best" style="color:#7f1d1d;">fishspeech S1 mini (CC-BY-NC-SA-4.0) · Voxtral-4B-TTS (CC-BY-NC-4.0)</div>
       </div>
       <div class="summary-item">
         <div class="crit">Efficiency winner</div>
@@ -1321,7 +1370,7 @@
   <!-- ─── § 6: EMOTION EXPRESSIVENESS ─── -->
   <section class="section" id="emotions">
     <h2 class="section-heading"><span class="num">§ 6</span> Emotion Expressiveness</h2>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:6px;">Five models support explicit emotion control — each using a different paradigm. The same 9 emotion categories were tested across all five. Click ▶ to play any clip; only one audio plays at a time across the entire page.</p>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:6px;">Seven models support explicit emotion control — each using a different paradigm. The same 9 emotion categories were tested across all seven. Click ▶ to play any clip; only one audio plays at a time across the entire page.</p>
     <p style="font-size:12.5px;color:var(--muted);margin-bottom:22px;">Input sentence: <em>"I can't believe you actually did that — I've been waiting for this moment for years."</em></p>
 
     <div class="table-wrap">
@@ -1335,6 +1384,7 @@
             <th><div class="em-model-header">fishspeech S1 mini<span class="em-mech">Parenthetical (angry)</span></div></th>
             <th><div class="em-model-header">Ming-Omni-TTS<span class="em-mech">emotion= param</span></div></th>
             <th><div class="em-model-header">Maya1<span class="em-mech">Inline tags &lt;laugh&gt;</span></div></th>
+            <th><div class="em-model-header">Voxtral-4B-TTS<span class="em-mech">Voice style presets</span></div></th>
           </tr>
         </thead>
         <tbody>
@@ -1372,6 +1422,11 @@
               <span class="em-time" id="time-e-maya-angry">0:00</span>
               <audio id="audio-e-maya-angry" src="recordings/emotions/maya/07_angry.wav" preload="metadata"></audio>
             </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('voxtral-angry')"><svg id="icon-e-voxtral-angry" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-voxtral-angry">0:00</span>
+              <audio id="audio-e-voxtral-angry" src="recordings/emotions/voxtral/07_angry_casual_female.wav" preload="metadata"></audio>
+            </td>
           </tr>
 
           <!-- Breath -->
@@ -1399,6 +1454,11 @@
               <audio id="audio-e-mingomni-breath" src="recordings/emotions/mingomni/emotion_breath.wav" preload="metadata"></audio>
             </td>
             <td class="emotion-cell"><span class="em-cell-none">—</span></td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('voxtral-breath')"><svg id="icon-e-voxtral-breath" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-voxtral-breath">0:00</span>
+              <audio id="audio-e-voxtral-breath" src="recordings/emotions/voxtral/03_breath_casual_male.wav" preload="metadata"></audio>
+            </td>
           </tr>
 
           <!-- Excited -->
@@ -1434,6 +1494,7 @@
               <span class="em-time" id="time-e-maya-excited">0:00</span>
               <audio id="audio-e-maya-excited" src="recordings/emotions/maya/05_excited.wav" preload="metadata"></audio>
             </td>
+            <td class="emotion-cell"><span class="em-cell-none">—</span></td>
           </tr>
 
           <!-- Fearful -->
@@ -1468,6 +1529,11 @@
               <button class="em-play-btn" onclick="toggleEmotion('maya-fearful')"><svg id="icon-e-maya-fearful" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
               <span class="em-time" id="time-e-maya-fearful">0:00</span>
               <audio id="audio-e-maya-fearful" src="recordings/emotions/maya/08_fearful.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('voxtral-fearful')"><svg id="icon-e-voxtral-fearful" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-voxtral-fearful">0:00</span>
+              <audio id="audio-e-voxtral-fearful" src="recordings/emotions/voxtral/08_fearful_casual_female.wav" preload="metadata"></audio>
             </td>
           </tr>
 
@@ -1504,6 +1570,11 @@
               <span class="em-time" id="time-e-maya-laugh">0:00</span>
               <audio id="audio-e-maya-laugh" src="recordings/emotions/maya/01_laugh.wav" preload="metadata"></audio>
             </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('voxtral-laugh')"><svg id="icon-e-voxtral-laugh" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-voxtral-laugh">0:00</span>
+              <audio id="audio-e-voxtral-laugh" src="recordings/emotions/voxtral/01_laugh_cheerful_female.wav" preload="metadata"></audio>
+            </td>
           </tr>
 
           <!-- Sad -->
@@ -1538,6 +1609,11 @@
               <button class="em-play-btn" onclick="toggleEmotion('maya-sad')"><svg id="icon-e-maya-sad" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
               <span class="em-time" id="time-e-maya-sad">0:00</span>
               <audio id="audio-e-maya-sad" src="recordings/emotions/maya/06_sad.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('voxtral-sad')"><svg id="icon-e-voxtral-sad" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-voxtral-sad">0:00</span>
+              <audio id="audio-e-voxtral-sad" src="recordings/emotions/voxtral/06_sad_casual_female.wav" preload="metadata"></audio>
             </td>
           </tr>
 
@@ -1574,6 +1650,11 @@
               <span class="em-time" id="time-e-maya-sigh">0:00</span>
               <audio id="audio-e-maya-sigh" src="recordings/emotions/maya/02_sigh.wav" preload="metadata"></audio>
             </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('voxtral-sigh')"><svg id="icon-e-voxtral-sigh" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-voxtral-sigh">0:00</span>
+              <audio id="audio-e-voxtral-sigh" src="recordings/emotions/voxtral/02_sigh_neutral_male.wav" preload="metadata"></audio>
+            </td>
           </tr>
 
           <!-- Surprised -->
@@ -1609,6 +1690,11 @@
               <span class="em-time" id="time-e-maya-surprised">0:00</span>
               <audio id="audio-e-maya-surprised" src="recordings/emotions/maya/09_surprised.wav" preload="metadata"></audio>
             </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('voxtral-surprised')"><svg id="icon-e-voxtral-surprised" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-voxtral-surprised">0:00</span>
+              <audio id="audio-e-voxtral-surprised" src="recordings/emotions/voxtral/09_surprised_cheerful_female.wav" preload="metadata"></audio>
+            </td>
           </tr>
 
           <!-- Whisper -->
@@ -1643,6 +1729,11 @@
               <button class="em-play-btn" onclick="toggleEmotion('maya-whisper')"><svg id="icon-e-maya-whisper" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
               <span class="em-time" id="time-e-maya-whisper">0:00</span>
               <audio id="audio-e-maya-whisper" src="recordings/emotions/maya/04_whisper.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('voxtral-whisper')"><svg id="icon-e-voxtral-whisper" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-voxtral-whisper">0:00</span>
+              <audio id="audio-e-voxtral-whisper" src="recordings/emotions/voxtral/04_whisper_neutral_male.wav" preload="metadata"></audio>
             </td>
           </tr>
 
@@ -1691,6 +1782,18 @@
             <td>Fine-grained parameter control</td>
             <td>Independent axes: <code>emotion=</code>, <code>rate=</code>, <code>pitch=</code>, <code>volume=</code>, <code>dialect=</code> — each set separately. Emotion accuracy 76.7% on CV3-Eval</td>
             <td>Apache 2.0</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/maya-research/maya1" target="_blank">Maya1</a></td>
+            <td>Inline tag injection</td>
+            <td>20+ emotion tags inserted directly in text: <code>&lt;laugh&gt;</code>, <code>&lt;whisper&gt;</code>, <code>&lt;cry&gt;</code>, <code>&lt;gasp&gt;</code> …</td>
+            <td>Apache 2.0</td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/mistralai/Voxtral-4B-TTS-2603" target="_blank">Voxtral-4B-TTS</a></td>
+            <td>Voice style presets</td>
+            <td>20 preset voices (e.g. <code>cheerful_female</code>, <code>casual_male</code>, <code>neutral_male</code>) combined with context-driven emotion steering; supports neutral, happy, and sarcastic tones contextually</td>
+            <td><span class="badge badge-warn" style="font-size:11px;">CC-BY-NC-4.0</span></td>
           </tr>
         </tbody>
       </table>
@@ -1833,7 +1936,7 @@
   }
 
   const models = ['novasonic','vibevoice','chatterbox','csm','dia2','diva',
-                  'fishspeech','kokoro','magpie','mingomni','moshi','qwen','maya'];
+                  'fishspeech','kokoro','magpie','mingomni','moshi','qwen','maya','voxtral'];
   models.forEach(bindAudio);
 
   function bindEmotion(id) {
@@ -1870,7 +1973,9 @@
     'mingomni-angry','mingomni-breath','mingomni-excited','mingomni-fearful',
     'mingomni-laugh','mingomni-sad','mingomni-sigh','mingomni-surprised','mingomni-whisper',
     'maya-angry','maya-excited','maya-fearful',
-    'maya-laugh','maya-sad','maya-sigh','maya-surprised','maya-whisper'
+    'maya-laugh','maya-sad','maya-sigh','maya-surprised','maya-whisper',
+    'voxtral-angry','voxtral-breath','voxtral-fearful',
+    'voxtral-laugh','voxtral-sad','voxtral-sigh','voxtral-surprised','voxtral-whisper'
   ];
   emotionIds.forEach(bindEmotion);
 </script>

@@ -23,6 +23,7 @@ Data sourced from HuggingFace model pages, GitHub repos, and hands-on testing.
 | [Ming-Omni-TTS-0.5B](https://huggingface.co/inclusionAI/Ming-omni-tts-0.5B) | 0.5B | 3.1Hz (Patch-by-Patch compression) | Not stated | **Yes** | **Yes** (zero-shot) | **Yes** (fine-grained, 76.7% accuracy) | No | No | Apache 2.0 |
 | [CSM-1B](https://huggingface.co/sesame/csm-1b) | 1B | Slow | Not stated | **Yes** | Limited (base model — requires fine-tuning for specific voices) | No | No | No | Apache 2.0 |
 | [Maya1](https://huggingface.co/maya-research/maya1) | 3B | **Sub-100ms** (with vLLM) | **Yes – streaming** | **Yes (MPS/CPU)** | No | **Yes** (20+ inline tags `<laugh>` `<whisper>`) | No | No | **Apache 2.0** |
+| [Voxtral-4B-TTS-2603](https://huggingface.co/mistralai/Voxtral-4B-TTS-2603) | 4B | **70ms** (single concurrency) | Yes – streaming | Linux + NVIDIA GPU | **Yes** (3-sec zero-shot voice clone) | **Yes** (contextual + voice style presets) | No | No | CC BY-NC 4.0 (**non-commercial only**) |
 
 ---
 
@@ -44,6 +45,7 @@ Data sourced from HuggingFace model pages, GitHub repos, and hands-on testing.
 | [Ming-Omni-TTS-0.5B](https://huggingface.co/inclusionAI/Ming-omni-tts-0.5B) | Chinese (primary), English, Cantonese | Industry-first unified generation of speech + ambient sound + music in single channel; handles math expressions and chemical equations; vocal controls: rate, pitch, volume, emotion, dialect; 0.83% WER (Chinese eval) | Ugly |
 | [CSM-1B](https://huggingface.co/sesame/csm-1b) | English (primary; limited non-English due to data contamination) | Context-aware generation; multi-speaker dialogue; batch inference; CUDA graph compilation; fine-tuning compatible; native Transformers integration | Sounds great |
 | [Maya1](https://huggingface.co/maya-research/maya1) | English (multi-accent) | Natural language zero-shot voice descriptions; 20+ emotion tags `<laugh>` `<whisper>` `<cry>` `<sigh>`; Llama-style 3B + SNAC codec 24kHz; vLLM production infra; prefix caching for repeated voices; runs on Mac via MPS/CPU | Very nice — ElevenLabs quality |
+| [Voxtral-4B-TTS-2603](https://huggingface.co/mistralai/Voxtral-4B-TTS-2603) | English, French, German, Spanish, Italian, Portuguese, Dutch, Arabic, Hindi (9 languages) | 3.4B Ministral decoder + 390M flow-matching acoustic transformer + 300M neural audio codec; 20 preset voices; 3-sec zero-shot voice cloning; emotion-steering via voice style selection; native 2-min generation; 24kHz; vLLM recommended | Not yet personally assessed |
 
 ---
 
@@ -67,6 +69,7 @@ Data sourced from HuggingFace model pages, GitHub repos, and hands-on testing.
 | [Ming-Omni-TTS-0.5B](https://huggingface.co/inclusionAI/Ming-omni-tts-0.5B) | ■ | ■ | WSYue-TTS-Eval · WSC-TTS-Eval · CV3-Eval · Seed-TTS-Eval · InstructTTS-Eval-ZH | Dialect accuracy: **96%** (WSYue) · **86%** (WSC) · **93%** (Cantonese) · Emotion accuracy: **76.7%** (CV3 avg) · Voice clone WER: **0.83%** · Text norm CER: **1.97%** · Instruction following: **76.20%** · Inference rate: **3.1 Hz** |
 | [CSM-1B](https://huggingface.co/sesame/csm-1b) | ■ | ■ | ■ | ■ |
 | [Maya1](https://huggingface.co/maya-research/maya1) | Internet-scale English speech + proprietary curated studio recordings (human-verified, MFA-aligned, MinHash-LSH text deduped, Chromaprint audio deduped) | ■ | ■ | ■ |
+| [Voxtral-4B-TTS-2603](https://huggingface.co/mistralai/Voxtral-4B-TTS-2603) | ■ | **4B** (3.4B + 390M + 300M) | Internal | Latency: **70ms** (single) · **331ms** (16 concurrent) · RTF: **0.103** (single) · **0.237** (16 concurrent) · Throughput: **119–1,430 chars/s/GPU** |
 
 
 ---
@@ -80,9 +83,9 @@ Data sourced from HuggingFace model pages, GitHub repos, and hands-on testing.
 | Best naturalness (personal) | Nova Sonic v2, Maya1, VibeVoice, Kokoro-82M, Magpie, CSM-1B |
 | Most languages | Chatterbox (23), CosyVoice 3 (9 + 18 dialects), fishspeech (13) |
 | Richest emotion control | fishspeech S1 mini (49 tags), Ming (fine-grained), Maya1 (20+ inline tags), Chatterbox (exaggeration) |
-| Voice cloning | Chatterbox, CosyVoice 3, Ming, PersonaPlex |
+| Voice cloning | Chatterbox, CosyVoice 3, Ming, Voxtral (3-sec), PersonaPlex |
 | Watermarking | VibeVoice (dual), Chatterbox (Perth) |
 | Lightest / fastest locally | Kokoro-82M (82M params), Magpie (357M), VibeVoice (0.5B) |
 | Free for commercial use | Kokoro-82M, VibeVoice, CSM-1B, Chatterbox, Magpie, CosyVoice 3, Maya1 |
-| **Non-commercial only** | fishspeech S1 mini (CC-BY-NC-SA-4.0) |
+| **Non-commercial only** | fishspeech S1 mini (CC-BY-NC-SA-4.0) · Voxtral-4B-TTS (CC-BY-NC-4.0) |
 

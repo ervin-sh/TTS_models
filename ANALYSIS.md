@@ -6,7 +6,7 @@
 
 AWS Nova Sonic v2 represents the current high watermark for production-grade real-time voice AI: full-duplex, ultra-low latency, emotionally expressive, and watermarked for responsible deployment. The question driving this experiment was simple: **how close has the open-source ecosystem gotten, and what can you actually build with it today?**
 
-Thirteen open-source models were evaluated against Nova Sonic v2 as the reference point. Testing was conducted on a local Mac wherever possible, with the same input text run through each model. Success was measured across four axes:
+Fourteen open-source models were evaluated against Nova Sonic v2 as the reference point. Testing was conducted on a local Mac wherever possible, with the same input text run through each model. Success was measured across four axes:
 
 - **Naturalness** — does it sound like a person or a machine?
 - **Latency** — can it keep up with real-time conversation?
@@ -25,7 +25,7 @@ Human conversation has a perceptual threshold around 300ms. Below it, a response
 
 | Tier | Threshold | Models |
 | --- | --- | --- |
-| **Tier 1 — Real-time capable** | < 200ms | Maya1 (sub-100ms, vLLM), CosyVoice 3 (~150ms), Chatterbox (<200ms), PersonaPlex (170ms turn-taking / 240ms interruption) |
+| **Tier 1 — Real-time capable** | < 200ms | Maya1 (sub-100ms, vLLM), Voxtral-4B-TTS (70ms), CosyVoice 3 (~150ms), Chatterbox (<200ms), PersonaPlex (170ms turn-taking / 240ms interruption) |
 | **Tier 2 — Borderline** | 200–300ms | VibeVoice-Realtime (~300ms) |
 | **Tier 3 — Not real-time** | > 300ms or unspecified | CSM-1B (slow), fishspeech on Mac (very slow), DiVA (not specified), Dia-2B (not specified), Kokoro-82M (fast but unquantified), Magpie (fast but unquantified) |
 
@@ -81,9 +81,9 @@ The differentiator is **architecture and data curation**. Kokoro's training data
 
 ## 4. The Emotion and Affect Tagging Landscape
 
-One of the most fragmented areas across the tested models was emotion control. Five fundamentally different paradigms were observed, each with different implications for how you'd integrate them into a production system.
+One of the most fragmented areas across the tested models was emotion control. Six fundamentally different paradigms were observed, each with different implications for how you'd integrate them into a production system.
 
-### The Five Paradigms
+### The Six Paradigms
 
 | Paradigm | Models | Mechanism | Best For |
 | --- | --- | --- | --- |
@@ -91,6 +91,7 @@ One of the most fragmented areas across the tested models was emotion control. F
 | **Parenthetical markers (49 tags)** | fishspeech S1 mini | `(laughing)` `(sobbing)` `(whispering)` `(angry)` `(sad)` `(excited)` `(proud)` `(disgusted)` + 40 more | Scripted, highly-controlled audio production |
 | **Continuous exaggeration slider** | Chatterbox | CFG dial controls emotional intensity, Pace dial controls delivery speed | Character audio design, audiobooks, games |
 | **Fine-grained vocal parameter control** | Ming-Omni | rate, pitch, volume, emotion, dialect as independent knobs | Studio-quality voice design workflows |
+| **Voice style presets** | Voxtral-4B-TTS | 20 named voice presets (cheerful_female, casual_male, neutral_male…) steer emotion via style selection + context-driven generation | Voice-persona-first workflows, customer service agents |
 | **Emotion recognition (not generation)** | Kimi-Audio | SER — detects and classifies emotion in input audio | Audio analytics, sentiment analysis, not TTS |
 
 ### Analysis
@@ -100,6 +101,8 @@ One of the most fragmented areas across the tested models was emotion control. F
 **fishspeech's 49-tag vocabulary is the richest palette available**, offering tags that go well beyond simple emotion into affect and tone: `(whispering)`, `(panting)`, `(groaning)`, `(crowd laughing)`. In principle this enables nuanced voice performance. In practice, the base voice quality was rated as "sounds funny" in testing — which limits how much the emotional tags help. A well-delivered neutral voice is worth more than 49 tags on a voice that doesn't sound right.
 
 **Chatterbox's exaggeration slider is distinct** because it controls intensity rather than type. You don't pick "angry" — you set how expressive the model should be and it interprets the text's emotional content. This is closer to how a voice director actually works ("give me 30% more intensity on that line"). Combined with its voice cloning capability, this makes Chatterbox interesting for character-level audio design in games or interactive applications.
+
+**Voxtral's voice style preset model is distinct** from all others: rather than tags in text or knobs set at generation time, emotion is encoded in the choice of voice persona itself. Picking `cheerful_female` versus `neutral_male` for the same sentence produces different affective outputs without any in-text markup. This is closer to how casting directors think — pick the right voice, not the right tag.
 
 **The open gap:** No model in this set does continuous, real-time emotion modulation during streaming. Every system requires the emotion to be decided before or during text generation — not during audio synthesis. Building a model that can shift emotional tone mid-stream in response to live conversational context is an open research problem.
 
@@ -220,10 +223,10 @@ These are not hypothetical. Each build is based directly on demonstrated capabil
 
 3. **Full-duplex is still the cloud moat.** Interruption handling is the one thing open-source has not solved at scale.
 
-4. **Emotion is a fragmented, unsolved design space.** Five different paradigms exist with no consensus. Inline tag injection (Nova Sonic, CosyVoice 3, Maya1) is the most composable for LLM pipelines; nobody has solved real-time mid-stream emotion modulation yet.
+4. **Emotion is a fragmented, unsolved design space.** Six different paradigms exist with no consensus. Inline tag injection (Nova Sonic, CosyVoice 3, Maya1) is the most composable for LLM pipelines; Voxtral's voice style presets offer a persona-first alternative; nobody has solved real-time mid-stream emotion modulation yet.
 
 5. **Multi-persona is closer than expected.** Dia-2B and CSM-1B both produce convincing multi-speaker audio. Chatterbox and CosyVoice 3 make arbitrary voice personas possible from short clips.
 
-6. **Watermarking is a critical gap.** 11 of 13 open models ship with no audio provenance mechanism. This will matter more, not less, as AI voice generation becomes mainstream.
+6. **Watermarking is a critical gap.** 12 of 14 open models ship with no audio provenance mechanism. This will matter more, not less, as AI voice generation becomes mainstream.
 
-7. **Check the license before you build.** fishspeech looks open and has impressive capabilities on paper, but its CC-BY-NC-SA-4.0 license makes it unusable for commercial products.
+7. **Check the license before you build.** fishspeech looks open but its CC-BY-NC-SA-4.0 license makes it unusable commercially. Voxtral-4B-TTS is similarly restricted under CC BY-NC 4.0 — notable given Mistral's generally permissive licensing track record.
