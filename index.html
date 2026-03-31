@@ -706,6 +706,7 @@
           <span class="badge badge-blue">357M</span>
           <span class="badge badge-yes">Streaming</span>
           <span class="badge badge-blue">50K hrs training</span>
+          <span class="badge badge-yes">Emotions</span>
         </div>
         <div class="card-note good">Very natural — surprising</div>
         <div class="player">
@@ -1024,7 +1025,7 @@
             <td><span class="badge badge-yes">Yes</span></td>
             <td><span class="badge badge-no">Removed</span></td>
             <td><span class="badge badge-no">Enterprise only</span></td>
-            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-yes">Annotation tags</span></td>
             <td>NVIDIA OML</td>
           </tr>
           <tr>
@@ -1154,7 +1155,7 @@
           <tr>
             <td class="model-cell"><a href="https://huggingface.co/nvidia/magpie_tts_multilingual_357m" target="_blank">Magpie TTS 357M</a> <button class="mini-play" onclick="togglePlay('magpie')">▶</button></td>
             <td>9 languages (EN ES DE FR VI IT ZH HI JA)</td>
-            <td>5 fixed speakers; multi-codebook prediction; 50K hrs training; built-in text normalization</td>
+            <td>5 fixed speakers; multi-codebook prediction; 50K hrs training; built-in text normalization; annotation tag emotions</td>
             <td class="notes-cell">Very natural — surprising</td>
           </tr>
           <tr>
@@ -1370,7 +1371,7 @@
   <!-- ─── § 6: EMOTION EXPRESSIVENESS ─── -->
   <section class="section" id="emotions">
     <h2 class="section-heading"><span class="num">§ 6</span> Emotion Expressiveness</h2>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:6px;">Seven models support explicit emotion control — each using a different paradigm. The same 9 emotion categories were tested across all seven. Click ▶ to play any clip; only one audio plays at a time across the entire page.</p>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:6px;">Eight models support explicit emotion control — each using a different paradigm. The same 9 emotion categories were tested across all eight. Click ▶ to play any clip; only one audio plays at a time across the entire page.</p>
     <p style="font-size:12.5px;color:var(--muted);margin-bottom:22px;">Input sentence: <em>"I can't believe you actually did that — I've been waiting for this moment for years."</em></p>
 
     <div class="table-wrap">
@@ -1385,6 +1386,7 @@
             <th><div class="em-model-header">Ming-Omni-TTS<span class="em-mech">emotion= param</span></div></th>
             <th><div class="em-model-header">Maya1<span class="em-mech">Inline tags &lt;laugh&gt;</span></div></th>
             <th><div class="em-model-header">Voxtral-4B-TTS<span class="em-mech">Voice style presets</span></div></th>
+            <th><div class="em-model-header">Magpie TTS 357M<span class="em-mech">Inline tags [angry]</span></div></th>
           </tr>
         </thead>
         <tbody>
@@ -1427,6 +1429,11 @@
               <span class="em-time" id="time-e-voxtral-angry">0:00</span>
               <audio id="audio-e-voxtral-angry" src="recordings/emotions/voxtral/07_angry_casual_female.wav" preload="metadata"></audio>
             </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('magpie-angry')"><svg id="icon-e-magpie-angry" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-magpie-angry">0:00</span>
+              <audio id="audio-e-magpie-angry" src="recordings/emotions/magpie/angry.wav" preload="metadata"></audio>
+            </td>
           </tr>
 
           <!-- Breath -->
@@ -1458,6 +1465,11 @@
               <button class="em-play-btn" onclick="toggleEmotion('voxtral-breath')"><svg id="icon-e-voxtral-breath" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
               <span class="em-time" id="time-e-voxtral-breath">0:00</span>
               <audio id="audio-e-voxtral-breath" src="recordings/emotions/voxtral/03_breath_casual_male.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('magpie-breath')"><svg id="icon-e-magpie-breath" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-magpie-breath">0:00</span>
+              <audio id="audio-e-magpie-breath" src="recordings/emotions/magpie/breath.wav" preload="metadata"></audio>
             </td>
           </tr>
 
@@ -1495,6 +1507,11 @@
               <audio id="audio-e-maya-excited" src="recordings/emotions/Maya/05_excited.wav" preload="metadata"></audio>
             </td>
             <td class="emotion-cell"><span class="em-cell-none">—</span></td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('magpie-excited')"><svg id="icon-e-magpie-excited" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-magpie-excited">0:00</span>
+              <audio id="audio-e-magpie-excited" src="recordings/emotions/magpie/excited.wav" preload="metadata"></audio>
+            </td>
           </tr>
 
           <!-- Fearful -->
@@ -1534,6 +1551,11 @@
               <button class="em-play-btn" onclick="toggleEmotion('voxtral-fearful')"><svg id="icon-e-voxtral-fearful" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
               <span class="em-time" id="time-e-voxtral-fearful">0:00</span>
               <audio id="audio-e-voxtral-fearful" src="recordings/emotions/voxtral/08_fearful_casual_female.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('magpie-fearful')"><svg id="icon-e-magpie-fearful" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-magpie-fearful">0:00</span>
+              <audio id="audio-e-magpie-fearful" src="recordings/emotions/magpie/fearful.wav" preload="metadata"></audio>
             </td>
           </tr>
 
@@ -1575,6 +1597,11 @@
               <span class="em-time" id="time-e-voxtral-laugh">0:00</span>
               <audio id="audio-e-voxtral-laugh" src="recordings/emotions/voxtral/01_laugh_cheerful_female.wav" preload="metadata"></audio>
             </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('magpie-laugh')"><svg id="icon-e-magpie-laugh" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-magpie-laugh">0:00</span>
+              <audio id="audio-e-magpie-laugh" src="recordings/emotions/magpie/laugh.wav" preload="metadata"></audio>
+            </td>
           </tr>
 
           <!-- Sad -->
@@ -1614,6 +1641,11 @@
               <button class="em-play-btn" onclick="toggleEmotion('voxtral-sad')"><svg id="icon-e-voxtral-sad" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
               <span class="em-time" id="time-e-voxtral-sad">0:00</span>
               <audio id="audio-e-voxtral-sad" src="recordings/emotions/voxtral/06_sad_casual_female.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('magpie-sad')"><svg id="icon-e-magpie-sad" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-magpie-sad">0:00</span>
+              <audio id="audio-e-magpie-sad" src="recordings/emotions/magpie/sad.wav" preload="metadata"></audio>
             </td>
           </tr>
 
@@ -1655,6 +1687,11 @@
               <span class="em-time" id="time-e-voxtral-sigh">0:00</span>
               <audio id="audio-e-voxtral-sigh" src="recordings/emotions/voxtral/02_sigh_neutral_male.wav" preload="metadata"></audio>
             </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('magpie-sigh')"><svg id="icon-e-magpie-sigh" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-magpie-sigh">0:00</span>
+              <audio id="audio-e-magpie-sigh" src="recordings/emotions/magpie/sigh.wav" preload="metadata"></audio>
+            </td>
           </tr>
 
           <!-- Surprised -->
@@ -1695,6 +1732,11 @@
               <span class="em-time" id="time-e-voxtral-surprised">0:00</span>
               <audio id="audio-e-voxtral-surprised" src="recordings/emotions/voxtral/09_surprised_cheerful_female.wav" preload="metadata"></audio>
             </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('magpie-surprised')"><svg id="icon-e-magpie-surprised" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-magpie-surprised">0:00</span>
+              <audio id="audio-e-magpie-surprised" src="recordings/emotions/magpie/surprised.wav" preload="metadata"></audio>
+            </td>
           </tr>
 
           <!-- Whisper -->
@@ -1734,6 +1776,11 @@
               <button class="em-play-btn" onclick="toggleEmotion('voxtral-whisper')"><svg id="icon-e-voxtral-whisper" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
               <span class="em-time" id="time-e-voxtral-whisper">0:00</span>
               <audio id="audio-e-voxtral-whisper" src="recordings/emotions/voxtral/04_whisper_neutral_male.wav" preload="metadata"></audio>
+            </td>
+            <td class="emotion-cell">
+              <button class="em-play-btn" onclick="toggleEmotion('magpie-whisper')"><svg id="icon-e-magpie-whisper" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+              <span class="em-time" id="time-e-magpie-whisper">0:00</span>
+              <audio id="audio-e-magpie-whisper" src="recordings/emotions/magpie/whisper.wav" preload="metadata"></audio>
             </td>
           </tr>
 
@@ -1794,6 +1841,12 @@
             <td>Voice style presets</td>
             <td>20 preset voices (e.g. <code>cheerful_female</code>, <code>casual_male</code>, <code>neutral_male</code>) combined with context-driven emotion steering; supports neutral, happy, and sarcastic tones contextually</td>
             <td><span class="badge badge-warn" style="font-size:11px;">CC-BY-NC-4.0</span></td>
+          </tr>
+          <tr>
+            <td class="model-cell"><a href="https://huggingface.co/nvidia/magpie_tts_multilingual_357m" target="_blank">Magpie TTS 357M</a></td>
+            <td>Inline tag injection</td>
+            <td>Annotation tags inserted directly in text: <code>[angry]</code>, <code>[laugh]</code>, <code>[whisper]</code>, <code>[sad]</code>, <code>[excited]</code>, <code>[sigh]</code> …</td>
+            <td><span class="badge badge-warn" style="font-size:11px;">NVIDIA OML</span></td>
           </tr>
         </tbody>
       </table>
